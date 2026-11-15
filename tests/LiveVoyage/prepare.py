@@ -1,8 +1,9 @@
 """Stage a release acceptance profile in an empty mods directory."""
 
 import argparse
+import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from zipfile import ZipFile
 
 
@@ -35,7 +36,7 @@ def make_consumer(mods, example):
     (folder / "transport.json").write_text(definition + "\n", encoding="utf-8")
 
 
-def prepare(folder, scenario):
+def prepare(folder, scenario, saddle_zip=None):
     folder.mkdir(parents=True, exist_ok=True)
     if any(folder.iterdir()):
         raise ValueError(f"Use an empty QA mods directory: {folder}")
@@ -48,7 +49,15 @@ def prepare(folder, scenario):
             else:
                 make_consumer(folder, archive)
     if scenario in ("garru", "bull", "mixed", "stoat"):
-        with release(SADDLE) as archive:
+        with (ZipFile(saddle_zip) if saddle_zip else release(SADDLE)) as archive:
+            if saddle_zip:
+                for member in archive.infolist():
+                    path = PurePosixPath(member.filename)
+                    if (not path.parts or path.parts[0] != SADDLE or ".." in path.parts
+                            or "\\" in member.filename or ":" in member.filename):
+                        raise ValueError(f"Unexpected path in saddle ZIP: {member.filename}")
+                for required in (f"{SADDLE}/{SADDLE}.mod", f"{SADDLE}/transport.json"):
+                    archive.getinfo(required)
             if scenario == "bull":
                 name = "Pack Bull Saddle"
                 target = folder / name
@@ -65,6 +74,11 @@ def prepare(folder, scenario):
                     dest.write_bytes(archive.read(f"{SADDLE}/{original[asset]}"))
             else:
                 archive.extractall(folder)
+                if saddle_zip:
+                    for member in archive.infolist():
+                        if not member.is_dir() and archive.read(member) != (folder / member.filename).read_bytes():
+                            raise ValueError(f"Installed saddle payload differs: {member.filename}")
+                    print("Installed authored saddle ZIP SHA-256:", hashlib.sha256(saddle_zip.read_bytes()).hexdigest())
     if scenario == "stoat":
         with release("Stoat Desert Ride") as archive:
             archive.extractall(folder)
@@ -75,5 +89,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("scenario", choices=["core", "example", "author", "garru", "bull", "mixed", "stoat"])
     parser.add_argument("mods", type=Path)
+    parser.add_argument("--saddle-zip", type=Path)
     args = parser.parse_args()
-    prepare(args.mods, args.scenario)
+    prepare(args.mods, args.scenario, args.saddle_zip)

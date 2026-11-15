@@ -6,6 +6,8 @@ Ride a squad animal or sail a one-seat vessel in Kenshi with **MeitouClient v0.1
 
 **Public playtest `0.3.0-playtest.4`** includes four installable ZIPs, corresponding source and checksums. Extract the kit, then extract each mod you want directly into `Kenshi/mods/`. [Release notes and individual downloads](https://github.com/mattresspad/MeitouTransport/releases/tag/v0.3.0-playtest.4)
 
+**Local rider-anchor trial.** This branch builds Transport `0.3.0-qa.602` for the Windows x64 game `v0.19.1-nightly.20261114.3` (commit `fb8282d`). The two Stoat rides use Meitou’s native character anchor and the original Maestro-exported Garru Saddle. [Measured results](docs/stoat-draw-anchor.md) · [Run the comparison](tests/LiveVoyage/README.md#reproduce-the-stoat-turn) · [Pinned game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.19.1-nightly.20261114.3)
+
 Players using MeitouClient **v0.17.4** can use the [previous playtest](https://github.com/mattresspad/MeitouTransport/releases/tag/v0.3.0-playtest.3).
 
 | Install | In game |

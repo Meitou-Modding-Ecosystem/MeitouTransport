@@ -5,6 +5,7 @@ param(
     [Parameter(Mandatory)][string]$Game,
     [Parameter(Mandatory)][string]$TrialDirectory,
     [string]$OldSave,
+    [string]$SaddleZip,
     [string]$CacheDirectory,
     [string]$CpuVulkanIcd
 )
@@ -12,6 +13,10 @@ $ErrorActionPreference = 'Stop'
 $trial = [IO.Path]::GetFullPath($TrialDirectory)
 if (Test-Path -LiteralPath $trial) { throw "Use a fresh trial directory: $trial" }
 $gameExe = (Resolve-Path (Join-Path $Game 'MeitouClient.exe')).Path
+$expectedBuild = '0.19.1-nightly.20261114.3+fb8282dc652ac2975e24c2d68e55dc60cf7f7b5a'
+$actualBuild = (Get-Item -LiteralPath $gameExe).VersionInfo.ProductVersion
+if ($actualBuild -ne $expectedBuild) { throw "This verifier needs $expectedBuild. Found $actualBuild." }
+Write-Output "Meitou game $actualBuild"
 $source = (Resolve-Path $Kenshi).Path
 $install = Join-Path $trial 'install'
 New-Item -ItemType Directory -Path $install -Force | Out-Null
@@ -20,7 +25,9 @@ foreach ($file in 'resources.cfg','fcs.def','controls.cfg','screens.cfg','kenshi
     if (Test-Path -LiteralPath (Join-Path $source $file)) { Copy-Item -LiteralPath (Join-Path $source $file) -Destination $install }
 }
 $staging = switch ($Scenario) { 'old-save' { 'example' } 'bare' { 'garru' } 'fit' { 'garru' } 'bags' { 'garru' } 'stoat-bags' { 'stoat' } default { $Scenario } }
-& python (Join-Path $PSScriptRoot 'prepare.py') $staging (Join-Path $install 'mods')
+$packArgs = @()
+if ($SaddleZip) { $packArgs = @('--saddle-zip', (Resolve-Path -LiteralPath $SaddleZip).Path) }
+& python (Join-Path $PSScriptRoot 'prepare.py') $staging (Join-Path $install 'mods') @packArgs
 if ($LASTEXITCODE -ne 0) { throw 'Could not stage release ZIPs.' }
 if ($Scenario -eq 'stoat-bags') {
     & dotnet (Join-Path $PSScriptRoot '../../tools/DesertRide/bin/Release/net11.0/DesertRide.dll') --pack-beast (Join-Path $install 'mods/Stoat Desert Ride')

@@ -1,6 +1,24 @@
 # Live riding and voyage verification
 
-Set `MEITOU_DIR` to the extracted v0.18.0 Windows game directory. Build the framework and this verifier in Release, then run `python tools/package.py`. For the Stoat Pack Beast trial, also run `dotnet build tools/DesertRide/DesertRide.csproj -c Release`. Both Stoat scenarios exercise the local v0.18.0 build.
+Set `MEITOU_DIR` to the extracted Windows x64 game `v0.19.1-nightly.20261114.3`. The runner checks the executable’s complete product version and commit before staging the profile. Build the framework and this verifier in Release, then run `python tools/package.py`. For the Stoat Pack Beast trial, also run `dotnet build tools/DesertRide/DesertRide.csproj -c Release`.
+
+## Reproduce the Stoat turn
+
+Use the Garru Saddle ZIP exported by Maestro. This trial's ZIP has SHA-256 `59139598506042d1d9645cf0e98d3c7da8a6e4c2c4740ba516d66c5fa5cd23f7`. The runner compares each extracted member with the archive. The mod log identifies the fit the client registered.
+
+```powershell
+$kenshi = (Resolve-Path (Read-Host 'Kenshi installation directory')).Path
+$saddle = (Resolve-Path (Read-Host 'Maestro-exported Garru Saddle ZIP')).Path
+$trialRoot = Join-Path ([IO.Path]::GetTempPath()) ("stoat-turn-" + [guid]::NewGuid())
+foreach ($scenario in 'stoat','stoat-bags') {
+    .\tests\LiveVoyage\run.ps1 -Scenario $scenario -Kenshi $kenshi -Game $env:MEITOU_DIR -SaddleZip $saddle -TrialDirectory (Join-Path $trialRoot $scenario)
+}
+python tests/LiveVoyage/turn_clip.py "$trialRoot/stoat" "$trialRoot/stoat-bags" "$trialRoot/comparison"
+```
+
+The last command needs Pillow 10.1+ and FFmpeg with libx264. Use `--ffmpeg PATH` to select an executable. The clip pairs captured frames by heading change at the same camera angle. Each still also has an unmodified, full-resolution copy. The client log supplies the independent saddle-origin and rider-pelvis maxima in world units, the number of rendered frames and the native stock-bag count.
+
+The driver checks the drawn snapshot's carrier and bone, saddle and pelvis error below 0.08, rider facing and size, and the submitted saddle's rotation and scale. After reloading, it moves the Pack Beast's camera away until its world draw entry disappears for five frames. It then checks eight consecutive aligned frames, a single saddle, the stock bag and its contents on return. The final movement order goes to the dismounted rider.
 
 ## Windows release trials
 
@@ -25,7 +43,7 @@ For a lightweight visual check, choose **fit**. It runs the released client's fl
 
 Run `python tests/LiveVoyage/prepare.py author <empty-QA-mods-directory>` for the independent-author trial. The script extracts the packaged framework and follows its bundled guide to create the data-only **Skiff.mod**. Use `core` for the framework alone or `example` for the two shipping ZIPs. Point Meitou at a test installation with the original game data and those mod folders. Supply a separate `--mods-cfg` listing the framework first and the chosen content mod second.
 
-Set the following variables for the **test process** and start the v0.18.0 game with `--new-game Wanderer`.
+Set the following variables for the **test process** and start the pinned nightly game with `--new-game Wanderer`.
 
 | Variable | Value |
 | --- | --- |

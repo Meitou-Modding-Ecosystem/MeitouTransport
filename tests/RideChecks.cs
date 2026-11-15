@@ -17,6 +17,36 @@ internal static class RideChecks
         public Vector3 At(float x, float z) => new(x, GroundHeight(x, z), z);
     }
 
+    internal static void CheckAnchorConversion()
+    {
+        var carrier = new CharacterId(7, 1);
+        var fit = new MountDefinition("test.turn", "Tilted saddle", "Test.mod", "Back", new(2, 4, -1),
+            Quaternion.CreateFromYawPitchRoll(.23f, -.38f, .17f), new(1, 3, 2), .7f, "", "");
+        var bind = Quaternion.CreateFromYawPitchRoll(.8f, -.6f, .15f);
+        var skinTurn = Quaternion.CreateFromYawPitchRoll(-.43f, .27f, .31f);
+        var carrierTurn = Quaternion.CreateFromAxisAngle(Vector3.UnitY, 1.35f);
+        var pelvis = new Vector3(-.75f, 9.2f, 1.4f);
+        var boneAt = new Vector3(-4, 8, 2);
+        var boneWorldTurn = carrierTurn * skinTurn * bind;
+        foreach (float size in new[] { .55f, 1.45f })
+        {
+            var anchor = RiderAnchor.Calculate(carrier, fit, Quaternion.Inverse(bind), pelvis, size);
+            var riderWorld = Quaternion.Normalize(boneWorldTurn * anchor.Rotation);
+            var node = boneAt + Vector3.Transform(anchor.Offset * size, boneWorldTurn);
+            var placedPelvis = node + Vector3.Transform(pelvis, riderWorld);
+            var saddle = Matrix4x4.CreateFromQuaternion(fit.SaddleRotation) * Matrix4x4.CreateTranslation(fit.SaddleOffset)
+                * Matrix4x4.CreateScale(size) * Matrix4x4.CreateFromQuaternion(skinTurn)
+                * Matrix4x4.CreateFromQuaternion(carrierTurn) * Matrix4x4.CreateTranslation(boneAt);
+            var expectedFacing = Vector3.Normalize(Vector3.TransformNormal(Vector3.Transform(Vector3.UnitZ,
+                Quaternion.CreateFromAxisAngle(Vector3.UnitY, fit.SeatYaw)), saddle));
+            Check.That(anchor.Carrier == carrier && anchor.Bone == fit.Bone
+                && Vector3.Distance(placedPelvis, Vector3.Transform(fit.SeatOffset, saddle)) < .0001f
+                && Math.Abs(Vector3.Distance(node, placedPelvis) - pelvis.Length()) < .0001f
+                && Vector3.Dot(Vector3.Transform(Vector3.UnitZ, riderWorld), expectedFacing) > .99999f,
+                "the native node must place the unscaled pelvis on the rotated saddle at each carrier size");
+        }
+    }
+
     internal static List<ulong> Run(int threads)
     {
         var ground = new Hills();

@@ -17,7 +17,7 @@ internal sealed record VesselView(string Mesh, string Texture, Vector3 Previous,
 internal sealed record MountView(CharacterId Animal, CharacterId Rider, MountDefinition Fit);
 internal sealed record TransportView(long Tick, VesselView[] Vessels, MountView[] Mounts);
 
-/// <summary>The engine-facing integration for Meitou v0.18.0.</summary>
+/// <summary>Projects transport state into the snapshot and frame Meitou is drawing.</summary>
 internal static class Presentation
 {
     private static readonly Type GameHost = GameType("Meitou.Game.GameHost");
@@ -32,7 +32,7 @@ internal static class Presentation
     private static readonly MethodInfo DrawKey = Method(GameHost, "DrawKey");
     private static readonly ConditionalWeakTable<WorldSnapshot, TransportView> Views = new();
     private static readonly ConditionalWeakTable<object, Frame> Frames = new();
-    private static readonly CharacterPose[] SeatedPose = [new("sitting chair", 1, 1)];
+    private static readonly CharacterPose[] SeatedPose = [new(RiderAnchor.PoseName, RiderAnchor.PoseTime, 1)];
 
     public static void Install(Harmony harmony, bool mounts)
     {
@@ -69,9 +69,8 @@ internal static class Presentation
         public readonly Func<CharacterId, long> KeyFor = DrawKey.CreateDelegate<Func<CharacterId, long>>(host);
         public readonly List<DebrisPiece> Meshes = [];
         internal readonly Dictionary<long, Seat> Seats = [];
-        internal readonly Dictionary<long, (long Rider, MountDefinition Fit)> Mounts = [];
+        internal readonly Dictionary<long, MountDefinition> Mounts = [];
         internal readonly HashSet<long> MountedRiders = [];
-        internal readonly Dictionary<long, int> LiveSlots = [];
         public readonly Dictionary<(string Mesh, string Texture), string> Assets = [];
         public readonly HashSet<string> Missing = new(StringComparer.Ordinal);
 
@@ -117,7 +116,7 @@ internal static class Presentation
         foreach (var mount in view.Mounts)
         {
             long rider = frame.KeyFor(mount.Rider);
-            frame.Mounts[frame.KeyFor(mount.Animal)] = (rider, mount.Fit);
+            frame.Mounts[frame.KeyFor(mount.Animal)] = mount.Fit;
             frame.MountedRiders.Add(rider);
         }
         if (frame.Seats.Count == 0 && frame.MountedRiders.Count == 0) return;

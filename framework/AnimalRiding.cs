@@ -2,16 +2,18 @@ using System.Numerics;
 using Meitou.Data.World;
 using Meitou.Simulation;
 using Meitou.Simulation.Locks;
+using Meitou.Simulation.Movement;
 
 namespace Meitou.Transport;
 
 public sealed partial class TransportSystem
 {
-    private sealed class Ride(CharacterId animal, CharacterId rider, MountDefinition fit, Vector3 footing)
+    private sealed class Ride(CharacterId animal, CharacterId rider, MountDefinition fit, Vector3 footing, RiderAnchor? anchor)
     {
         internal readonly CharacterId Animal = animal, Rider = rider;
         internal readonly MountDefinition Fit = fit;
         internal Vector3 Footing = footing;
+        internal readonly RiderAnchor? Anchor = anchor;
     }
 
     private readonly IReadOnlyDictionary<string, MountDefinition> fits = new Dictionary<string, MountDefinition>();
@@ -66,7 +68,19 @@ public sealed partial class TransportSystem
         var id = new CharacterId(nearest, mount.Generation);
         var exit = Footing(world.Walkability, mount, coldMount);
         // The rider's current footing remains available if the local navigation tiles are still streaming.
-        var ride = new Ride(id, rider, fits[coldMount.Animal!.StringId], exit ?? from);
+        var fit = fits[coldMount.Animal!.StringId];
+        RiderAnchor? anchor = null;
+        // Logic-only simulation worlds have no posing system.
+        if (world.Systems.OfType<AnimationSystem>().FirstOrDefault()?.Rigs is { } rigs)
+        {
+            anchor = RiderAnchor.For(rigs, table.Cold(slot)!, coldMount, fit.Bone);
+            if (anchor == null || !anchor.Update(id, fit, coldMount.Animal.Scale(coldMount.ShownAge)))
+            {
+                world.Post($"Cannot resolve the seated rider or the animal bone '{fit.Bone}'.");
+                return;
+            }
+        }
+        var ride = new Ride(id, rider, fit, exit ?? from, anchor);
         StopOrders(world, slot);
         riders.Add(rider, ride);
         rides.Add(nearest, ride);
@@ -121,6 +135,7 @@ public sealed partial class TransportSystem
 
     private void ReleaseRide(Ride ride)
     {
+        ride.Anchor?.Clear();
         rides.Remove(ride.Animal.Slot);
         riders.Remove(ride.Rider);
     }
@@ -133,7 +148,9 @@ public sealed partial class TransportSystem
         {
             bool riderAlive = table.TryResolveNext(ride.Rider, out int r);
             bool animalAlive = table.TryResolveNext(ride.Animal, out int a);
-            if (!riderAlive || !animalAlive || !Available(table.Cold(r)) || !Available(table.Cold(a)))
+            var coldMount = animalAlive ? table.Cold(a) : null;
+            if (!riderAlive || !Available(table.Cold(r)) || !Available(coldMount) || coldMount?.Animal is not { } species
+                || ride.Anchor?.Update(ride.Animal, ride.Fit, species.Scale(coldMount.ShownAge)) == false)
             {
                 (ended ??= []).Add(ride);
                 if (riderAlive && table.Cold(r) is { InSomething: HeldState.None, CarriedBy.IsNone: true })
@@ -145,7 +162,7 @@ public sealed partial class TransportSystem
                 continue;
             }
             ref readonly var animal = ref table.Next[a];
-            ride.Footing = Footing(world.Walkability, animal, table.Cold(a)!) ?? ride.Footing;
+            ride.Footing = Footing(world.Walkability, animal, coldMount) ?? ride.Footing;
             ref var rider = ref table.Next[r];
             rider.Position = animal.Position;
             rider.Yaw = animal.Yaw;

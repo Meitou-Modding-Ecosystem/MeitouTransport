@@ -20,7 +20,7 @@ namespace Meitou.Transport.Verification;
 internal static class LiveRide
 {
     private const string ProbeId = "meitou.transport.live-ride";
-    private enum Stage { Start, Approach, Mount, Walk, Run, Turn, FitPhoto, Saving, Loading, Remount, Exit, Foot, ApproachBull, MountBull, RideBull, LeaveBull, Done }
+    private enum Stage { Start, Approach, Mount, Walk, Run, Turn, FitPhoto, Saving, Loading, Remount, Exit, LeaveView, ReturnView, Foot, ApproachBull, MountBull, RideBull, LeaveBull, Done }
     private static Stage stage;
     private static string record = "", pack = "", mesh = "", bone = "";
     private static Vector3 saddleOffset, seatOffset, start, corner;
@@ -30,6 +30,7 @@ internal static class LiveRide
     private static World? originalWorld;
     private static SaveCheck? save;
     private static uint animalSerial;
+    private static int absentFrames, returnFrames, riderOnlyFrames, carrierOnlyFrames;
     private static string? backpack;
     private static string[] cargo = [];
     private static float initialYaw, low, high;
@@ -192,11 +193,12 @@ internal static class LiveRide
                 status = Stopwatch.GetTimestamp();
             }
             void Move(CharacterSnapshot who, Vector3 to) => world.Commands.Enqueue(new MoveOrder([who.Id], to) { Tick = world.Tick });
-            void Camera()
+            void Camera(bool away = false)
             {
                 if (!desert) { session.Camera.Place(new(animal.Position.X, animal.Position.Z), 1.1f, .26f, 98); return; }
                 // Keep one world-space viewing angle for the whole corner, broadside halfway through.
                 var target = animal.Position + 17f * animal.Scale * Vector3.UnitY;
+                if (away) target += new Vector3(18000, 0, 18000);
                 float yaw = MathF.Atan2(route.First.X, route.First.Z) - .75f * MathF.PI;
                 const float pitch = .17f, distanceToTarget = 99;
                 var eye = CameraState.EyeFor(target, yaw, pitch, distanceToTarget);
@@ -214,6 +216,9 @@ internal static class LiveRide
             bool SameInventory() => bag == backpack && cargo.SequenceEqual(InventoryEntries(inventory).Order(StringComparer.Ordinal));
             if (drawn && stage is >= Stage.Mount and <= Stage.Saving)
             {
+                Check(rider.Anchor is { } native && native.Carrier == animal.Id && native.Bone == bone,
+                    $"drawn tick {snap.Tick}: expected native carrier {animal.Id}, bone {bone}, got {rider.Anchor}");
+                if (frames == 0) Log($"native anchor on drawn tick {snap.Tick}: {rider.Name} -> {animal.Name} {animal.Id}, bone {bone}");
                 CheckFrame(__instance, host, animal, rider, saddle);
                 if (record == DesertRide.PackBeast) { CheckStockBag(animal); bagFrames++; }
                 if (stage == Stage.Turn) turnFrames++;
@@ -222,7 +227,9 @@ internal static class LiveRide
                 high = Math.Max(high, animal.Position.Y);
                 frames++;
             }
-            if (desert && drawn && (stage == Stage.Run || stage == Stage.Turn) && snap.Tick - lastCaptureTick >= 3)
+            if (desert && stage is Stage.Walk or Stage.Run or Stage.Turn)
+                Check(drawn, $"saddle missing at on-screen tick {snap.Tick}");
+            if (desert && drawn && (stage == Stage.Run || stage == Stage.Turn) && snap.Tick - lastCaptureTick >= (stage == Stage.Turn ? 1 : 3))
             {
                 lastCaptureTick = snap.Tick;
                 Shot($"ride-{snap.Tick:D6}");
@@ -274,7 +281,9 @@ internal static class LiveRide
                     Camera();
                     if (frames < 10 || Vector3.Distance(corner, animal.Position) < 42 || Math.Abs(MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau)) < .65f) return;
                     Check(drawn && animal.Selected && distance < .1f && (flatFit || desert || high - low > .6f), $"ride/turn/slope evidence, frames={frames}, relief={high - low}");
-                    Log(FormattableString.Invariant($"turn: poses={frames} turnFrames={turnFrames} nativeBagFrames={bagFrames} headingChange={Math.Abs(MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau)) * 180 / MathF.PI:F1} deg, maxSaddleError={maxSaddleError:F5} maxSeatError={maxSeatError:F5} units"));
+                    float turnDegrees = Math.Abs(MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau)) * 180 / MathF.PI;
+                    if (desert) Check(turnDegrees is >= 85 and <= 100, $"Stoat turn ended at {turnDegrees:F1} degrees");
+                    Log(FormattableString.Invariant($"turn: poses={frames} turnFrames={turnFrames} nativeBagFrames={bagFrames} headingChange={turnDegrees:F1} deg, maxSaddleError={maxSaddleError:F5} maxSeatError={maxSeatError:F5} units"));
                     Shot("turn");
                     if (flatFit)
                     {
@@ -298,7 +307,7 @@ internal static class LiveRide
                     if (snap.Tick < 2) return;
                     if (restoredTick is null) { restoredTick = snap.Tick; restoredAnimal = animal.Position; }
                     if (snap.Tick - restoredTick < 30) return;
-                    Check(!drawn && distance is > 2 and < 24 && save!.IsOriginalRider(rider) && animal.PortraitSerial == animalSerial
+                    Check(!drawn && rider.Anchor is null && distance is > 2 and < 24 && save!.IsOriginalRider(rider) && animal.PortraitSerial == animalSerial
                         && SameInventory() && Vector3.Distance(restoredAnimal, animal.Position) < 3,
                         $"restored native pair, route or inventory differs; distance {distance}, backpack {bag}, travel {Vector3.Distance(restoredAnimal, animal.Position)}");
                     Log($"reload on foot beside original animal, distance={distance:F1}, backpack={bag}, inventory entries={cargo.Length}");
@@ -311,9 +320,40 @@ internal static class LiveRide
                     LiveVoyage.Command(host, session, "Mount nearby animal"); Go(Stage.Exit); break;
                 case Stage.Exit:
                     if (!animal.Selected || !drawn) return;
+                    Check(rider.Anchor is { } restored && restored.Carrier == animal.Id && restored.Bone == bone, "remount did not restore the native anchor");
+                    CheckFrame(__instance, host, animal, rider, saddle);
+                    if (desert && record == DesertRide.PackBeast)
+                    {
+                        Camera(away: true); Go(Stage.LeaveView); break;
+                    }
+                    LiveVoyage.Command(host, session, "Dismount"); Go(Stage.Foot); break;
+                case Stage.LeaveView:
+                case Stage.ReturnView:
+                    Check(rider.Anchor is { } active && active.Carrier == animal.Id && active.Bone == bone, "lost snapshot anchor during camera travel");
+                    bool carrierVisible = WorldEntry(__instance, host, animal.Id) != null;
+                    bool riderVisible = WorldEntry(__instance, host, rider.Id) != null;
+                    if (!carrierVisible && riderVisible) riderOnlyFrames++;
+                    if (carrierVisible && !riderVisible) carrierOnlyFrames++;
+                    if (stage == Stage.LeaveView)
+                    {
+                        Camera(away: true);
+                        if (carrierVisible) { absentFrames = 0; return; }
+                        Check(!drawn, "stale saddle after the carrier left the world draw list");
+                        if (++absentFrames < 5) return;
+                        Log($"camera away: carrier absent {absentFrames} frames, rider visible={riderVisible}, saddle absent");
+                        Camera(); Go(Stage.ReturnView); break;
+                    }
+                    Camera();
+                    if (!carrierVisible || !riderVisible || !drawn) { returnFrames = 0; return; }
+                    CheckFrame(__instance, host, animal, rider, saddle);
+                    CheckStockBag(animal);
+                    Check(SameInventory(), "changed bag or cargo during camera travel");
+                    if (++returnFrames < 8) return;
+                    Log($"camera return: {returnFrames} consecutive aligned frames, one saddle, bag and cargo intact; rider-only frames={riderOnlyFrames}, carrier-only frames={carrierOnlyFrames}");
                     LiveVoyage.Command(host, session, "Dismount"); Go(Stage.Foot); break;
                 case Stage.Foot:
                     if (!rider.Selected || drawn) return;
+                    Check(rider.Anchor == null, "dismount left a native anchor on the rider");
                     if (dismountedTick is null)
                     {
                         dismountedAnimal = animal.Position;
@@ -354,28 +394,39 @@ internal static class LiveRide
                     LiveVoyage.Command(host, session, "Dismount"); Go(Stage.LeaveBull); break;
                 case Stage.LeaveBull:
                     if (!rider.Selected || !File.Exists("bull.png")) return;
+                    Log(FormattableString.Invariant($"all measured frames including save and remount: maxSaddleError={maxSaddleError:F5} maxSeatError={maxSeatError:F5} units"));
                     Log($"PASS Stoat outfit, authored start, {animal.Name} ride and turn, save, reload, remount, and Domesticated Bull ride");
                     Go(Stage.Done); break;
             }
         }
-        catch (Exception e) { Log("FAIL " + e); Go(Stage.Done); }
+        catch (Exception e)
+        {
+            var channel = Field(host, "AgentChannel")!;
+            AccessTools.Field(channel.GetType(), "ShotPath").SetValue(channel, Path.GetFullPath("failure.png"));
+            AccessTools.Field(host.GetType(), "ScreenshotRequested").SetValue(host, true);
+            Log($"FAIL {stage} tick={session.CurrentSnapshot.Tick}: {e}");
+            Go(Stage.Done);
+        }
     }
 
     // Compare the actual character-renderer palette and the loose-mesh submission, independently of framework state.
-    private static void CheckFrame(object renderer, object host, CharacterSnapshot animal, CharacterSnapshot rider, DebrisPiece piece)
+    private static object? WorldEntry(object renderer, object host, CharacterId id)
     {
-        long Key(CharacterId id) => (long)AccessTools.Method(host.GetType(), "DrawKey").Invoke(host, [id])!;
-        long a = Key(animal.Id), r = Key(rider.Id);
+        long key = (long)AccessTools.Method(host.GetType(), "DrawKey").Invoke(host, [id])!;
         var live = (Array)Field(renderer, "_live")!;
-        object? carrier = null, passenger = null;
-        for (int i = 0; i < (int)Field(renderer, "_liveCount")! && (carrier is null || passenger is null); i++)
+        for (int i = 0; i < (int)Field(renderer, "_liveCount")!; i++)
         {
             var entry = live.GetValue(i)!;
-            if ((bool)Field(entry, "PortraitOnly")!) continue;
-            var key = (long)Field(entry, "Key")!;
-            if (key == a) carrier = entry;
-            if (key == r) passenger = entry;
+            if (!(bool)Field(entry, "PortraitOnly")! && (long)Field(entry, "Key")! == key)
+                return entry;
         }
+        return null;
+    }
+
+    private static void CheckFrame(object renderer, object host, CharacterSnapshot animal, CharacterSnapshot rider, DebrisPiece piece)
+    {
+        var carrier = WorldEntry(renderer, host, animal.Id);
+        var passenger = WorldEntry(renderer, host, rider.Id);
         if (carrier is null || passenger is null) throw new InvalidOperationException("missing rendered character");
         static Matrix4x4 Anchor(object live, string name)
         {
@@ -391,7 +442,7 @@ internal static class LiveRide
         float saddleError = Vector3.Distance(point, origin);
         maxSaddleError = Math.Max(maxSaddleError, saddleError);
         Check(decomposed && saddleError < .08f
-            && MathF.Abs(Quaternion.Dot(rot, piece.Rotation)) > .999f && Math.Abs(scale.X - piece.Scale) < .005f, "saddle differs from the current back bone");
+            && MathF.Abs(Quaternion.Dot(rot, piece.Rotation)) > .999f && Math.Abs(scale.X - piece.Scale) < .005f, $"saddle differs from the current back bone: {saddleError:F5} units");
         var body = (Matrix4x4)Field(passenger, "World")!;
         var facing = Vector3.Transform(Vector3.TransformNormal(Vector3.UnitZ, Matrix4x4.CreateRotationY(seatYaw)), rot);
         float seatError = Vector3.Distance(Anchor(passenger, "Bip01 Pelvis").Translation, Vector3.Transform(seatOffset, expected));
@@ -399,6 +450,6 @@ internal static class LiveRide
         Check(seatError < .08f
             && Math.Abs(Vector3.TransformNormal(Vector3.UnitX, body).Length() - rider.Scale) < .01f
             && Vector3.Dot(Vector3.Normalize(Vector3.TransformNormal(Vector3.UnitZ, body)), facing) > .999f,
-            "rider pelvis, facing or proportions differ from the current saddle");
+            $"rider pelvis, facing or proportions differ from the current saddle: {seatError:F5} units; native={rider.Anchor}");
     }
 }

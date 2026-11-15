@@ -302,6 +302,7 @@ public sealed partial class TransportSystem(IReadOnlyDictionary<string, Transpor
         boats.Clear();
         dormant.Clear();
         helms.Clear();
+        foreach (var ride in rides.Values) ride.Anchor?.Clear();
         rides.Clear();
         riders.Clear();
         stoppedOnDismount.Clear();
