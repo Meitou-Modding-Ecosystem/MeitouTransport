@@ -63,7 +63,7 @@ def package_mods(project, stage):
         if name == CORE:
             if manifest["assemblies"] != ["Meitou.Transport.dll"]:
                 raise ValueError("Check the framework assembly list before packaging this version.")
-            members = ["meitou.json", *manifest["assemblies"]]
+            members = ["maestro.json", "meitou.json", *manifest["assemblies"]]
         else:
             members = ["transport.json", *sample_assets(folder)]
         for member in (f"{name}.mod", *members):
@@ -85,7 +85,7 @@ def handoff(stage):
             archive.extractall(work)
         project = Path(work) / prefix
         env = os.environ.copy()
-        release = Path(env.get("MEITOU_DIR") or ROOT / ".local/game/Meitou-0.19.1-local.740-win-x64")
+        release = Path(env.get("MEITOU_DIR") or ROOT / ".local/game/Meitou-0.20.1-win-x64")
         env["MEITOU_DIR"] = str(release.resolve())
         subprocess.run(["dotnet", "build", "framework/Meitou.Transport.csproj", "-c", "Release",
                         "-p:UseSharedCompilation=false"], cwd=project, env=env, check=True)

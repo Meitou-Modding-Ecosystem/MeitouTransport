@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 $trial = [IO.Path]::GetFullPath($TrialDirectory)
 if (Test-Path -LiteralPath $trial) { throw "Use a fresh trial directory: $trial" }
 $gameExe = (Resolve-Path (Join-Path $Game 'MeitouClient.exe')).Path
-$expectedBuild = '0.19.1-local.740+b3cb76581108fb8d9d6ea551c8a08db4d26c2488'
+$expectedBuild = '0.20.1+8c79093d075fac1f4ca8df53cf025b6155cac45f'
 $actualBuild = (Get-Item -LiteralPath $gameExe).VersionInfo.ProductVersion
 if ($actualBuild -ne $expectedBuild) { throw "This verifier needs $expectedBuild. Found $actualBuild." }
 Write-Output "Meitou game $actualBuild"
@@ -80,7 +80,10 @@ if ($Scenario -in 'garru','bare','fit','bags','bull','mixed','stoat','stoat-bags
         $start = '--load "' + $slot + '"'
     }
 }
-[IO.File]::WriteAllText((Join-Path $trial 'meitou.user.json'),'{"version":2,"fullScreen":false,"fpsLimit":30,"vSync":false,"splashScreens":false,"sandboxPanelCollapsed":true,"simThreads":4}')
+$settings = @{ version=2; fullScreen=$false; fpsLimit=30; vSync=$false; splashScreens=$false; sandboxPanelCollapsed=$true; simThreads=4 }
+# The culling test moves the camera outside the squad leash radius.
+if ($Scenario -eq 'stoat-bags') { $settings.cameraLeash = $false }
+[IO.File]::WriteAllText((Join-Path $trial 'meitou.user.json'), ($settings | ConvertTo-Json -Compress))
 $log = Join-Path $trial 'client.log'
 $options = '--headless --no-load-cache --no-precompile --no-foliage --no-gi --no-audio --water-reflection 0'
 if ($CpuVulkanIcd) {

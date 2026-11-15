@@ -1,16 +1,12 @@
 # Live riding and voyage verification
 
-Use the .NET 11 SDK. In an upstream Meitou checkout at commit `b3cb76581108fb8d9d6ea551c8a08db4d26c2488`, publish the Windows x64 game to an absolute `MEITOU_DIR` of your choice. This trial used the official preceding nightly’s optional upscaler DLLs via `MEITOU_STREAMLINE_PATH`.
-
-```powershell
-dotnet publish src/Meitou.Game/Meitou.Game.csproj -c Release -r win-x64 --self-contained false -p:Version=0.19.1-local.740 -p:BuildGitTag=v0.19.1-local.740 -p:BuildGitCommit=b3cb765 -p:InformationalVersion=0.19.1-local.740+b3cb76581108fb8d9d6ea551c8a08db4d26c2488 -p:IncludeSourceRevisionInInformationalVersion=false -o $env:MEITOU_DIR
-```
+Set `MEITOU_DIR` to the extracted [v0.20.1 Windows x64 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1).
 
 Back in the Transport checkout, build the framework, `tests/LiveVoyage/LiveVoyage.csproj` and `tools/DesertRide/DesertRide.csproj` in Release, then run `python tools/package.py`. The trial runner checks the executable’s full product version and commit before staging the profile.
 
 ## Reproduce the Stoat turn
 
-Use the Garru Saddle ZIP exported by Maestro. This trial's ZIP has SHA-256 `59139598506042d1d9645cf0e98d3c7da8a6e4c2c4740ba516d66c5fa5cd23f7`. The runner compares each extracted member with the archive. The mod log identifies the fit the client registered.
+Use the Garru Saddle ZIP exported by Maestro. Record its SHA-256 before installing. The runner compares each extracted member with the archive. The mod log identifies the fit the client registered.
 
 ```powershell
 $kenshi = (Resolve-Path (Read-Host 'Kenshi installation directory')).Path

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1, "provider": "meitou.transport", "name": "Meitou Transport",
+  "actions": [{
+    "id":"riding-fit","label":"Add riding fit","recordType":"AnimalCharacter",
+    "inputs":[
+      {"key":"pack","label":"Pack ID","kind":"text"},
+      {"key":"fit","label":"Fit ID","kind":"text"},
+      {"key":"label","label":"Display name","kind":"text"},
+      {"key":"animals","label":"Animals sharing this fit","kind":"selection"},
+      {"key":"bone","label":"Anchor bone","kind":"bone"},
+      {"key":"saddle","label":"Saddle offset · X Y Z","kind":"vector","default":[0,0,0]},
+      {"key":"rotation","label":"Pitch, yaw, roll · degrees","kind":"vector","default":[0,0,0]},
+      {"key":"seat","label":"Seat offset · X Y Z","kind":"vector","default":[0,0,0]},
+      {"key":"yaw","label":"Rider facing · degrees","kind":"number","default":0},
+      {"key":"mesh","label":"Saddle mesh","kind":"asset","optional":true},
+      {"key":"texture","label":"Diffuse texture","kind":"asset","optional":true}
+    ],
+    "preview":{"selection":"animals","anchor":"bone","mesh":"mesh","offset":"saddle","rotation":"rotation","seat":"seat","facing":"yaw"},
+    "edits":[
+      {"op":"dependency","file":"Meitou Transport.mod"},
+      {"op":"asset","input":"mesh","directory":"meshes","extensions":[".mesh"]},
+      {"op":"asset","input":"texture","directory":"textures","extensions":[".dds",".png"],"requires":"mesh"},
+      {"op":"jsonEntry","file":"transport.json","versionField":"schemaVersion","version":3,"preserveVersions":[1,2,3],
+       "upgradeDrop":{"from":1,"array":"placements","field":"placeOnLoad"},
+       "ownerField":"packId","owner":"pack","array":"mounts","idField":"id","id":"fit","ownerPrefix":true,
+       "fields":{"id":"fit","label":"label","animalRecordIds":"animals","anchorBone":"bone","saddleOffset":"saddle",
+         "saddleRotationDegrees":"rotation","seatOffset":"seat","seatYawDegrees":"yaw","saddleMesh":"mesh","texture":"texture"},
+       "uniqueSelection":"animalRecordIds"}
+    ]
+  }]
+}

@@ -1,8 +1,8 @@
 {
   "id": "meitou.transport",
-  "version": "0.3.0-qa.740",
+  "version": "0.3.0-playtest.5",
   "apiVersion": 2,
-  "gameVersion": "=0.19.1",
+  "gameVersion": "=0.20.1",
   "assemblies": ["Meitou.Transport.dll"],
   "entry": "Meitou.Transport.TransportMod"
 }

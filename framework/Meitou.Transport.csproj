@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Meitou.Transport</AssemblyName>
-    <Version>0.3.0-qa.740</Version>
+    <Version>0.3.0-playtest.5</Version>
     <DebugType>embedded</DebugType>
   </PropertyGroup>
   <Target Name="PackageMod" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">

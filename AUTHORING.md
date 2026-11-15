@@ -1,6 +1,6 @@
 # Make a transport pack
 
-For this local trial install **Meitou Transport 0.3.0-qa.740** for **MeitouClient commit `b3cb765`**. Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
+Install [Meitou Transport playtest.5](https://github.com/mattresspad/MeitouTransport/releases/tag/v0.3.0-playtest.5) for [MeitouClient v0.20.1](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1). Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
 
 The original skiff, saddle, textures, example headers and definitions are dedicated to the public domain under CC0. You may rename, modify and redistribute them in your own packs, including commercial work, without attribution. [License terms](LICENSING.md)
 
@@ -88,3 +88,11 @@ Each animal or vessel has one seat. The animal owns its movement and gait. The b
 **Stoat Desert Ride** shows how a third pack can depend on an existing saddle pack. Its FCS file adds a new-game start, a rider and a squad template. The start fixes X and Z. The template gives the player one Garru and one Domesticated Bull. The rider record chooses Scorchlander, a 100 percent female chance, and four stock clothing records in distinct slots. Existing saves gain access to the bull fit when this pack is enabled. Only selecting the new start creates the recording party.
 
 Open `Stoat Desert Ride.mod` in FCS to edit these records. Its `transport.json` supplies a fit for **Domesticated Bull** (`43949-rebirth.mod`) on the animal's own rig. **Garru Saddle** supplies the Garru fit. The bull reuses the CC0 saddle art under pack-specific filenames. In the corresponding source ZIP, `tools/DesertRide/Program.cs` shows exactly how the three FCS records were built.
+
+## Fit an animal in Maestro
+
+Install [Maestro](https://github.com/mattresspad/MeitouMaestro/releases/tag/v0.1.0-playtest.1) and the released framework. Choose **Add riding fit**, select the animal from your FCS project, preview its bone and seat, then review and export. The framework supplies the action through `maestro.json`. [Illustrated walkthrough](https://github.com/mattresspad/MeitouMaestro/blob/v0.1.0-playtest.1/AVALONIA.md)
+
+## A question for Husbandry authors
+
+How would you make a hitching post that an author can place in their own town? We welcome a design example describing what the town mod owns, how the player assigns or releases an animal, what survives reloading, and the smallest in-game demonstration. If that design requires a new animal job, identify the operation Meitou would need to expose. Husbandry is a proposed independent provider.
