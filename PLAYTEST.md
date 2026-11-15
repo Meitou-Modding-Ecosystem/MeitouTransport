@@ -1,12 +1,12 @@
 # Meitou Transport playtest
 
-**Local Transport candidate `0.3.0-qa.602`** was tested on the **Windows x64 game v0.19.1-nightly.20261114.3**, commit `fb8282d`, with an installed copy of Kenshi. Its manifest matches the numeric game version `=0.19.1`. Select the exact nightly in the launcher to reproduce the trial. Players can install the ZIPs directly. [Pinned MeitouClient game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.19.1-nightly.20261114.3)
+**Local Transport candidate `0.3.0-qa.740`** uses the Windows x64 Meitou source build `0.19.1-local.740` at commit `b3cb765` and an installed copy of Kenshi. The game manifest checks numeric version `=0.19.1`; the Stoat verifier checks the exact executable. [Tested Meitou source](https://github.com/VlcekM/MeitouClient/commit/b3cb76581108fb8d9d6ea551c8a08db4d26c2488)
 
 ## Install
 
 1. When using the Stoat comparison kit, unzip it into a temporary folder first. Its installable mod ZIPs are inside `Mods/`. The kit includes a source archive and `SHA256SUMS.txt`. To check a file in PowerShell, run `Get-FileHash -Algorithm SHA256 "filename.zip"` and compare the result with its line in the checksum list.
 2. Extract the **Meitou Transport** ZIP and whichever example ZIPs you want directly into your Kenshi installation's `mods` directory. A correctly placed file is `Kenshi/mods/Meitou Transport/Meitou Transport.mod`. To upgrade an earlier prototype, close the client and replace each corresponding mod folder. Keep a copy of the save you plan to use.
-3. For the recording start, enable **Meitou Transport → Garru Saddle → Stoat Desert Ride** in the launcher. For the boat, enable **Meitou Transport → Western Hive Skiff**. To play both together, use **Meitou Transport → Garru Saddle → Stoat Desert Ride → Western Hive Skiff**. Launch game v0.19.1-nightly.20261114.3.
+3. For the recording start, enable **Meitou Transport → Garru Saddle → Stoat Desert Ride** in the launcher. For the boat, enable **Meitou Transport → Western Hive Skiff**. To play both together, use **Meitou Transport → Garru Saddle → Stoat Desert Ride → Western Hive Skiff**. Launch the pinned local game.
 
 ## Ride a Garru
 

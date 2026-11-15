@@ -1,6 +1,6 @@
 # Make a transport pack
 
-For this local trial install **Meitou Transport 0.3.0-qa.602** for **MeitouClient v0.19.1-nightly.20261114.3**. Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
+For this local trial install **Meitou Transport 0.3.0-qa.740** for **MeitouClient commit `b3cb765`**. Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
 
 The original skiff, saddle, textures, example headers and definitions are dedicated to the public domain under CC0. You may rename, modify and redistribute them in your own packs, including commercial work, without attribution. [License terms](LICENSING.md)
 

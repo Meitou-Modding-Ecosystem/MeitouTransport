@@ -1,6 +1,6 @@
 {
   "id": "meitou.transport",
-  "version": "0.3.0-qa.602",
+  "version": "0.3.0-qa.740",
   "apiVersion": 2,
   "gameVersion": "=0.19.1",
   "assemblies": ["Meitou.Transport.dll"],

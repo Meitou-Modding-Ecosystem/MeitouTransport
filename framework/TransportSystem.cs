@@ -200,7 +200,7 @@ public sealed partial class TransportSystem(IReadOnlyDictionary<string, Transpor
     public void SlowWorld(World world)
     {
         stoppedOnDismount.Clear(); // All movement workers have joined.
-        if (boats.Count == 0 && rides.Count == 0 && view.Mounts.Length == 0) return;
+        if (boats.Count == 0 && rides.Count == 0 && view.MountedRiders.Length == 0) return;
         AdvanceRides(world);
         foreach (var boat in boats.Values)
         {
@@ -240,7 +240,7 @@ public sealed partial class TransportSystem(IReadOnlyDictionary<string, Transpor
             pieces[index++] = new(d.HullPath, d.Texture, Navigation.AtSurface(b.Previous), Navigation.AtSurface(b.Position),
                 b.PreviousYaw, b.Yaw, b.Rider, d.SeatOffset);
         }
-        Volatile.Write(ref view, new(tick, pieces, rides.Values.Select(p => new MountView(p.Animal, p.Rider, p.Fit)).ToArray()));
+        Volatile.Write(ref view, new(tick, pieces, rides.Values.Select(p => p.Rider).ToArray()));
     }
 
     public void Hash(ref StateHasher hash)

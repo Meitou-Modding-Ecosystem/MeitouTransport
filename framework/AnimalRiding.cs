@@ -79,6 +79,7 @@ public sealed partial class TransportSystem
                 world.Post($"Cannot resolve the seated rider or the animal bone '{fit.Bone}'.");
                 return;
             }
+            anchor.AttachSaddle(fit);
         }
         var ride = new Ride(id, rider, fit, exit ?? from, anchor);
         StopOrders(world, slot);

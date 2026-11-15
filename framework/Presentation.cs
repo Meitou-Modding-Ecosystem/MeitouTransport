@@ -14,8 +14,7 @@ namespace Meitou.Transport;
 internal sealed record VesselView(string Mesh, string Texture, Vector3 Previous, Vector3 Current,
     float PreviousYaw, float Yaw, CharacterId Rider, Vector3 SeatOffset);
 
-internal sealed record MountView(CharacterId Animal, CharacterId Rider, MountDefinition Fit);
-internal sealed record TransportView(long Tick, VesselView[] Vessels, MountView[] Mounts);
+internal sealed record TransportView(long Tick, VesselView[] Vessels, CharacterId[] MountedRiders);
 
 /// <summary>Projects transport state into the snapshot and frame Meitou is drawing.</summary>
 internal static class Presentation
@@ -34,14 +33,13 @@ internal static class Presentation
     private static readonly ConditionalWeakTable<object, Frame> Frames = new();
     private static readonly CharacterPose[] SeatedPose = [new(RiderAnchor.PoseName, RiderAnchor.PoseTime, 1)];
 
-    public static void Install(Harmony harmony, bool mounts)
+    public static void Install(Harmony harmony, bool mounts, bool vessels)
     {
         TransportControls.Install(harmony, mounts);
         harmony.Patch(Method(typeof(World), "Publish"), postfix: Hook(nameof(CaptureSnapshot)));
         harmony.Patch(Method(GameHost, "FillDrawList"), postfix: Hook(nameof(PrepareFrame)));
         harmony.Patch(Method(GameHost, "FillWorldDrawList"), postfix: Hook(nameof(PrepareFrame)));
-        harmony.Patch(Method(Renderer, "CollectBolts"), postfix: Hook(nameof(AddMeshes)));
-        if (mounts) MountedDrawing.Install(harmony, Renderer);
+        if (vessels) harmony.Patch(Method(Renderer, "CollectBolts"), postfix: Hook(nameof(AddMeshes)));
     }
 
     private static Type GameType(string name) => typeof(IMod).Assembly.GetType(name, throwOnError: true)!;
@@ -69,7 +67,6 @@ internal static class Presentation
         public readonly Func<CharacterId, long> KeyFor = DrawKey.CreateDelegate<Func<CharacterId, long>>(host);
         public readonly List<DebrisPiece> Meshes = [];
         internal readonly Dictionary<long, Seat> Seats = [];
-        internal readonly Dictionary<long, MountDefinition> Mounts = [];
         internal readonly HashSet<long> MountedRiders = [];
         public readonly Dictionary<(string Mesh, string Texture), string> Assets = [];
         public readonly HashSet<string> Missing = new(StringComparer.Ordinal);
@@ -78,25 +75,23 @@ internal static class Presentation
         {
             var key = (mesh, texture);
             if (Assets.TryGetValue(key, out var asset)) return asset;
-            // The loose-mesh loader strips directories. Enabled mod resource folders resolve the unique filenames.
-            asset = FileName(mesh);
-            if (texture.Length > 0) asset += DebrisPiece.TextureMark + FileName(texture);
+            asset = LooseMeshKey(mesh, texture);
             Assets.Add(key, asset);
             return asset;
         }
-
-        private static string FileName(string path) => Path.GetFileName(path.Replace('\\', '/'));
     }
 
-    internal static Frame? FrameFor(object renderer) => DrawSource.GetValue(renderer) is Delegate { Target: { } host }
-        && Frames.TryGetValue(host, out var frame) ? frame : null;
+    internal static string LooseMeshKey(string mesh, string texture)
+    {
+        static string FileName(string path) => Path.GetFileName(path.Replace('\\', '/'));
+        return texture.Length == 0 ? FileName(mesh) : FileName(mesh) + DebrisPiece.TextureMark + FileName(texture);
+    }
 
     private static void PrepareFrame(object __instance, WorldSession ___Session, CharacterDrawList list)
     {
         var frame = Frames.GetValue(__instance, static host => new Frame(host));
         frame.Meshes.Clear();
         frame.Seats.Clear();
-        frame.Mounts.Clear();
         frame.MountedRiders.Clear();
         if (!Views.TryGetValue(___Session.CurrentSnapshot, out var view)) return;
         if (Player.GetValue(__instance) is { } player &&
@@ -113,12 +108,7 @@ internal static class Presentation
                 frame.Seats[frame.KeyFor(vessel.Rider)] = new Seat(origin + Vector3.Transform(vessel.SeatOffset, rotation), yaw);
         }
 
-        foreach (var mount in view.Mounts)
-        {
-            long rider = frame.KeyFor(mount.Rider);
-            frame.Mounts[frame.KeyFor(mount.Animal)] = mount.Fit;
-            frame.MountedRiders.Add(rider);
-        }
+        foreach (var rider in view.MountedRiders) frame.MountedRiders.Add(frame.KeyFor(rider));
         if (frame.Seats.Count == 0 && frame.MountedRiders.Count == 0) return;
         for (int i = 0; i < list.Items.Count; i++)
         {

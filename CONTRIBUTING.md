@@ -1,13 +1,13 @@
 # Building and testing Meitou Transport
 
-Use the **.NET 11 SDK** (11.0.100 for this candidate), **Python 3.9+**, and the **Windows x64 v0.19.1-nightly.20261114.3 game** release. Extract the game to a directory of your choice. `MEITOU_DIR` points to the directory containing `MeitouClient.dll`, `Meitou.Core.dll`, `Meitou.Data.dll`, `Meitou.Simulation.dll` and `0Harmony.dll`. If you prefer a project-local install, the default is `.local/game/Meitou-0.19.1-nightly.20261114.3-win-x64/`. The framework references these assemblies at build time. Players get them from Meitou. [MeitouClient v0.19.1-nightly.20261114.3 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.19.1-nightly.20261114.3)
+Use the **.NET 11 SDK** (11.0.100 for this trial), **Python 3.9+**, and a Windows x64 build of MeitouClient commit `b3cb765`. Set `MEITOU_DIR` to the published game directory containing `MeitouClient.dll`, `Meitou.Core.dll`, `Meitou.Data.dll`, `Meitou.Simulation.dll` and `0Harmony.dll`. The project-local default is `.local/game/Meitou-0.19.1-local.740-win-x64/`. [Build the tested client](tests/LiveVoyage/README.md)
 
 ## Build and check a change
 
 Run these commands in PowerShell from the root of the checkout or extracted source ZIP.
 
 ```powershell
-$env:MEITOU_DIR = (Resolve-Path (Read-Host 'Extracted Meitou v0.19.1-nightly.20261114.3 game directory')).Path
+$env:MEITOU_DIR = (Resolve-Path (Read-Host 'Published local Meitou game directory')).Path
 dotnet build framework/Meitou.Transport.csproj -c Release
 dotnet run --project tests/Meitou.Transport.Tests.csproj -c Release
 python tools/package.py

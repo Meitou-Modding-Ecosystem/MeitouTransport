@@ -5,8 +5,9 @@ using Meitou.Simulation;
 namespace Meitou.Transport;
 
 // Schema 3 measures from the saddle to the rider's pelvis. DrawAnchor places the rider's node.
-internal sealed class RiderAnchor(CharacterRigs rigs, CharacterCold rider, Quaternion inverseBind)
+internal sealed class RiderAnchor(CharacterRigs rigs, CharacterCold rider, CharacterCold mount, Quaternion inverseBind)
 {
+    private const string SaddleKey = "meitou.transport.saddle";
     internal const string PoseName = "sitting chair";
     internal const float PoseTime = 1;
     private CharacterAppearance? appearance;
@@ -18,7 +19,15 @@ internal sealed class RiderAnchor(CharacterRigs rigs, CharacterCold rider, Quate
     {
         if (mount.Appearance is not { } look || rigs.For(look)?.Rig is not { } rig || rig.Handle(bone) is not int h)
             return null;
-        return new RiderAnchor(rigs, rider, rig.BindRotationInverse[h]);
+        return new RiderAnchor(rigs, rider, mount, rig.BindRotationInverse[h]);
+    }
+
+    internal void AttachSaddle(MountDefinition fit)
+    {
+        if (fit.Mesh.Length == 0) return;
+        // Schema 3 fits use rest-model axes. BoneMesh uses axes local to the named bone.
+        mount.SetBoneMesh(new BoneMesh(SaddleKey, Presentation.LooseMeshKey(fit.Mesh, fit.Texture), fit.Bone,
+            Vector3.Transform(fit.SaddleOffset, inverseBind), Quaternion.Normalize(inverseBind * fit.SaddleRotation)));
     }
 
     internal bool Update(CharacterId carrier, MountDefinition fit, float carrierScale)
@@ -61,6 +70,7 @@ internal sealed class RiderAnchor(CharacterRigs rigs, CharacterCold rider, Quate
 
     internal void Clear()
     {
+        mount.RemoveBoneMesh(SaddleKey);
         if (rider.DrawAnchor == written) rider.DrawAnchor = null;
         written = null;
     }

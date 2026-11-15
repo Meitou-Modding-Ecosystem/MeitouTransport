@@ -1,4 +1,5 @@
 using System.Numerics;
+using Meitou.Data.Characters;
 using Meitou.Data.Gameplay.Bodies;
 using Meitou.Simulation;
 using Meitou.Simulation.Bodies;
@@ -28,6 +29,16 @@ internal static class RideChecks
         var pelvis = new Vector3(-.75f, 9.2f, 1.4f);
         var boneAt = new Vector3(-4, 8, 2);
         var boneWorldTurn = carrierTurn * skinTurn * bind;
+        var animal = new CharacterCold();
+        var otherMesh = new BoneMesh("other.pack", "bag.mesh", "Back", Vector3.UnitY, Quaternion.Identity);
+        animal.SetBoneMesh(otherMesh);
+        var rigs = new CharacterRigs(new(), _ => null, _ => null);
+        var attachment = new RiderAnchor(rigs, new CharacterCold(), animal, Quaternion.Inverse(bind));
+        attachment.AttachSaddle(fit);
+        Check.That(animal.BoneMeshes.SequenceEqual([otherMesh]), "art-free fits leave other attachments alone");
+        attachment.AttachSaddle(fit with { Mesh = "meshes/test.mesh", Texture = "textures/test.dds" });
+        var native = animal.BoneMeshes.Single(m => m.Key == "meitou.transport.saddle");
+        Check.That(native.Mesh == "test.mesh?test.dds" && native.Bone == fit.Bone, "preserve the fit's mesh, texture and bone");
         foreach (float size in new[] { .55f, 1.45f })
         {
             var anchor = RiderAnchor.Calculate(carrier, fit, Quaternion.Inverse(bind), pelvis, size);
@@ -39,12 +50,18 @@ internal static class RideChecks
                 * Matrix4x4.CreateFromQuaternion(carrierTurn) * Matrix4x4.CreateTranslation(boneAt);
             var expectedFacing = Vector3.Normalize(Vector3.TransformNormal(Vector3.Transform(Vector3.UnitZ,
                 Quaternion.CreateFromAxisAngle(Vector3.UnitY, fit.SeatYaw)), saddle));
+            var saddleOrigin = boneAt + Vector3.Transform(native.Offset * size, boneWorldTurn);
+            Check.That(Vector3.Distance(saddleOrigin, saddle.Translation) < .0001f
+                && Math.Abs(Quaternion.Dot(boneWorldTurn * native.Rotation, carrierTurn * skinTurn * fit.SaddleRotation)) > .99999f,
+                "the native rigid mesh must retain the authored origin and rotation at each carrier size");
             Check.That(anchor.Carrier == carrier && anchor.Bone == fit.Bone
                 && Vector3.Distance(placedPelvis, Vector3.Transform(fit.SeatOffset, saddle)) < .0001f
                 && Math.Abs(Vector3.Distance(node, placedPelvis) - pelvis.Length()) < .0001f
                 && Vector3.Dot(Vector3.Transform(Vector3.UnitZ, riderWorld), expectedFacing) > .99999f,
                 "the native node must place the unscaled pelvis on the rotated saddle at each carrier size");
         }
+        attachment.Clear();
+        Check.That(animal.BoneMeshes.SequenceEqual([otherMesh]), "release removes only Transport's saddle");
     }
 
     internal static List<ulong> Run(int threads)
@@ -95,15 +112,15 @@ internal static class RideChecks
         Check.That(transport.IsSeated(rider) && transport.PassengerSlotPlusOne(mount) == rider.Slot + 1
             && world.Player.Selection.SequenceEqual([mount]), "mounting selects the actual animal");
         Action(TransportAction.Mount, other);
-        Check.That(!transport.IsSeated(other) && transport.View.Mounts.Length == 1, "one occupant per saddle");
+        Check.That(!transport.IsSeated(other) && transport.View.MountedRiders.Length == 1, "one occupant per saddle");
         var spare = Spawn(14, 21, "garru");
         Action(TransportAction.Mount, other);
-        Check.That(transport.PassengerSlotPlusOne(spare) == other.Slot + 1 && transport.View.Mounts.Length == 2,
+        Check.That(transport.PassengerSlotPlusOne(spare) == other.Slot + 1 && transport.View.MountedRiders.Length == 2,
             "a second rider can mount the next free animal when the closer saddle is occupied");
         Action(TransportAction.Dismount, spare);
         world.Characters.Remove(spare);
         Action(TransportAction.Board, rider);
-        Check.That(transport.View.Mounts.Single().Rider == rider && world.TakeMessages().Contains("Already aboard."), "saddle and helm share rider occupancy");
+        Check.That(transport.View.MountedRiders.Single() == rider && world.TakeMessages().Contains("Already aboard."), "saddle and helm share rider occupancy");
         var start = Pos(mount);
         world.Commands.Enqueue(new MoveOrder([mount], ground.At(85, 16)) { Tick = world.Tick });
         Step(55);
@@ -141,7 +158,7 @@ internal static class RideChecks
         Check.That(Pos(mount) == exitAt && world.Characters.Previous[mount.Slot].Velocity == Vector3.Zero,
             "a successful dismount stops the moving animal on its transfer tick");
         Step();
-        Check.That(!transport.IsSeated(rider) && transport.View.Mounts.Length == 0 && world.Player.Selection.SequenceEqual([rider]), "unmount selects the rider and removes the last visible saddle");
+        Check.That(!transport.IsSeated(rider) && transport.View.MountedRiders.Length == 0 && world.Player.Selection.SequenceEqual([rider]), "unmount selects the rider and removes the last visible saddle");
         var stopped = Pos(mount);
         var onFoot = Pos(rider);
         world.Commands.Enqueue(new MoveOrder([rider], ground.At(onFoot.X + 65, onFoot.Z)) { Tick = world.Tick });
@@ -151,7 +168,7 @@ internal static class RideChecks
         Action(TransportAction.Mount, fresh);
         world.Characters.Cold(mount.Slot)!.Medical!.KnockOut(60);
         Step();
-        Check.That(!transport.IsSeated(fresh) && transport.View.Mounts.Length == 0, "incapacitated animal releases its rider");
+        Check.That(!transport.IsSeated(fresh) && transport.View.MountedRiders.Length == 0, "incapacitated animal releases its rider");
         var replacement = Spawn(Pos(fresh).X + 7, Pos(fresh).Z, "garru");
         Action(TransportAction.Mount, fresh);
         Check.That(transport.PassengerSlotPlusOne(replacement) > 0, "a second animal may be mounted after a forced exit");

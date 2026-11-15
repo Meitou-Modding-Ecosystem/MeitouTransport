@@ -1,6 +1,12 @@
 # Live riding and voyage verification
 
-Set `MEITOU_DIR` to the extracted Windows x64 game `v0.19.1-nightly.20261114.3`. The runner checks the executable’s complete product version and commit before staging the profile. Build the framework and this verifier in Release, then run `python tools/package.py`. For the Stoat Pack Beast trial, also run `dotnet build tools/DesertRide/DesertRide.csproj -c Release`.
+Use the .NET 11 SDK. In an upstream Meitou checkout at commit `b3cb76581108fb8d9d6ea551c8a08db4d26c2488`, publish the Windows x64 game to an absolute `MEITOU_DIR` of your choice. This trial used the official preceding nightly’s optional upscaler DLLs via `MEITOU_STREAMLINE_PATH`.
+
+```powershell
+dotnet publish src/Meitou.Game/Meitou.Game.csproj -c Release -r win-x64 --self-contained false -p:Version=0.19.1-local.740 -p:BuildGitTag=v0.19.1-local.740 -p:BuildGitCommit=b3cb765 -p:InformationalVersion=0.19.1-local.740+b3cb76581108fb8d9d6ea551c8a08db4d26c2488 -p:IncludeSourceRevisionInInformationalVersion=false -o $env:MEITOU_DIR
+```
+
+Back in the Transport checkout, build the framework, `tests/LiveVoyage/LiveVoyage.csproj` and `tools/DesertRide/DesertRide.csproj` in Release, then run `python tools/package.py`. The trial runner checks the executable’s full product version and commit before staging the profile.
 
 ## Reproduce the Stoat turn
 

@@ -20,6 +20,7 @@ namespace Meitou.Transport.Verification;
 internal static class LiveRide
 {
     private const string ProbeId = "meitou.transport.live-ride";
+    private const string SaddleKey = "meitou.transport.saddle";
     private enum Stage { Start, Approach, Mount, Walk, Run, Turn, FitPhoto, Saving, Loading, Remount, Exit, LeaveView, ReturnView, Foot, ApproachBull, MountBull, RideBull, LeaveBull, Done }
     private static Stage stage;
     private static string record = "", pack = "", mesh = "", bone = "";
@@ -218,8 +219,8 @@ internal static class LiveRide
             {
                 Check(rider.Anchor is { } native && native.Carrier == animal.Id && native.Bone == bone,
                     $"drawn tick {snap.Tick}: expected native carrier {animal.Id}, bone {bone}, got {rider.Anchor}");
-                if (frames == 0) Log($"native anchor on drawn tick {snap.Tick}: {rider.Name} -> {animal.Name} {animal.Id}, bone {bone}");
                 CheckFrame(__instance, host, animal, rider, saddle);
+                if (frames == 0) Log($"native DrawAnchor and BoneMesh on tick {snap.Tick}: {rider.Name} -> {animal.Name}, bone {bone}, saddle mesh {mesh}, draw ID {saddle.Id}");
                 if (record == DesertRide.PackBeast) { CheckStockBag(animal); bagFrames++; }
                 if (stage == Stage.Turn) turnFrames++;
                 foreach (var layer in animal.Animations) gaits.Add(layer.Name);
@@ -279,9 +280,17 @@ internal static class LiveRide
                     Move(animal, corner + route.Second * 125); Go(Stage.Turn); break;
                 case Stage.Turn:
                     Camera();
-                    if (frames < 10 || Vector3.Distance(corner, animal.Position) < 42 || Math.Abs(MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau)) < .65f) return;
+                    float signedTurn = MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau);
+                    if (frames < 10 || Vector3.Distance(corner, animal.Position) < 42 || Math.Abs(signedTurn) < .65f) return;
+                    if (desert)
+                    {
+                        float targetYaw = MathF.Atan2(route.Second.X, route.Second.Z);
+                        float targetTurn = MathF.IEEERemainder(targetYaw - initialYaw, MathF.Tau);
+                        // Faster animals can cover 42 units well before completing the same corner.
+                        if (Math.Sign(targetTurn) * signedTurn < Math.Abs(targetTurn) - MathF.PI / 180) return;
+                    }
                     Check(drawn && animal.Selected && distance < .1f && (flatFit || desert || high - low > .6f), $"ride/turn/slope evidence, frames={frames}, relief={high - low}");
-                    float turnDegrees = Math.Abs(MathF.IEEERemainder(animal.Yaw - initialYaw, MathF.Tau)) * 180 / MathF.PI;
+                    float turnDegrees = Math.Abs(signedTurn) * 180 / MathF.PI;
                     if (desert) Check(turnDegrees is >= 85 and <= 100, $"Stoat turn ended at {turnDegrees:F1} degrees");
                     Log(FormattableString.Invariant($"turn: poses={frames} turnFrames={turnFrames} nativeBagFrames={bagFrames} headingChange={turnDegrees:F1} deg, maxSaddleError={maxSaddleError:F5} maxSeatError={maxSeatError:F5} units"));
                     Shot("turn");
@@ -307,7 +316,8 @@ internal static class LiveRide
                     if (snap.Tick < 2) return;
                     if (restoredTick is null) { restoredTick = snap.Tick; restoredAnimal = animal.Position; }
                     if (snap.Tick - restoredTick < 30) return;
-                    Check(!drawn && rider.Anchor is null && distance is > 2 and < 24 && save!.IsOriginalRider(rider) && animal.PortraitSerial == animalSerial
+                    Check(!drawn && rider.Anchor is null && !animal.BoneMeshes.Any(m => m.Key == SaddleKey)
+                        && distance is > 2 and < 24 && save!.IsOriginalRider(rider) && animal.PortraitSerial == animalSerial
                         && SameInventory() && Vector3.Distance(restoredAnimal, animal.Position) < 3,
                         $"restored native pair, route or inventory differs; distance {distance}, backpack {bag}, travel {Vector3.Distance(restoredAnimal, animal.Position)}");
                     Log($"reload on foot beside original animal, distance={distance:F1}, backpack={bag}, inventory entries={cargo.Length}");
@@ -330,6 +340,7 @@ internal static class LiveRide
                 case Stage.LeaveView:
                 case Stage.ReturnView:
                     Check(rider.Anchor is { } active && active.Carrier == animal.Id && active.Bone == bone, "lost snapshot anchor during camera travel");
+                    Check(animal.BoneMeshes.Any(m => m.Key == SaddleKey && m.Bone == bone), "lost native saddle during camera travel");
                     bool carrierVisible = WorldEntry(__instance, host, animal.Id) != null;
                     bool riderVisible = WorldEntry(__instance, host, rider.Id) != null;
                     if (!carrierVisible && riderVisible) riderOnlyFrames++;
@@ -353,7 +364,7 @@ internal static class LiveRide
                     LiveVoyage.Command(host, session, "Dismount"); Go(Stage.Foot); break;
                 case Stage.Foot:
                     if (!rider.Selected || drawn) return;
-                    Check(rider.Anchor == null, "dismount left a native anchor on the rider");
+                    Check(rider.Anchor == null && !animal.BoneMeshes.Any(m => m.Key == SaddleKey), "dismount left a native attachment");
                     if (dismountedTick is null)
                     {
                         dismountedAnimal = animal.Position;
@@ -425,6 +436,8 @@ internal static class LiveRide
 
     private static void CheckFrame(object renderer, object host, CharacterSnapshot animal, CharacterSnapshot rider, DebrisPiece piece)
     {
+        var attachment = animal.BoneMeshes.SingleOrDefault(m => m.Key == SaddleKey);
+        Check(attachment.Bone == bone && attachment.Mesh == mesh && piece.Id != 0, "missing native saddle definition or draw identity");
         var carrier = WorldEntry(renderer, host, animal.Id);
         var passenger = WorldEntry(renderer, host, rider.Id);
         if (carrier is null || passenger is null) throw new InvalidOperationException("missing rendered character");

@@ -85,7 +85,7 @@ def handoff(stage):
             archive.extractall(work)
         project = Path(work) / prefix
         env = os.environ.copy()
-        release = Path(env.get("MEITOU_DIR") or ROOT / ".local/game/Meitou-0.19.1-nightly.20261114.3-win-x64")
+        release = Path(env.get("MEITOU_DIR") or ROOT / ".local/game/Meitou-0.19.1-local.740-win-x64")
         env["MEITOU_DIR"] = str(release.resolve())
         subprocess.run(["dotnet", "build", "framework/Meitou.Transport.csproj", "-c", "Release",
                         "-p:UseSharedCompilation=false"], cwd=project, env=env, check=True)

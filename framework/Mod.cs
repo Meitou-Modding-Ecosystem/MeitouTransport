@@ -14,7 +14,7 @@ public sealed class TransportMod : IMod
         context.AddSystem("transport", _ => new TransportSystem(catalog, install, context.LogError), SystemAnchor.End);
         if (catalog.Placements.Count == 0 && catalog.Mounts.Count == 0) return;
 
-        Presentation.Install(context.Harmony, catalog.Mounts.Count > 0);
+        Presentation.Install(context.Harmony, catalog.Mounts.Count > 0, catalog.Placements.Count > 0);
         if (catalog.Mounts.Count > 0)
         {
             context.AddDebugCommand("Mount nearby animal", debug => Queue(debug, TransportAction.Mount));
