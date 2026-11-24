@@ -1,6 +1,6 @@
 # Building and testing Meitou Transport
 
-Use .NET SDK 11.0.100, Python 3.9+, and the packaged [MeitouClient v0.20.1 Windows x64 game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1). Set `MEITOU_DIR` to the extracted folder containing `MeitouClient.dll` and `Meitou.Data.dll`.
+Use .NET SDK 11.0.100, Python 3.9+, and the packaged [MeitouClient v0.22.1 Windows x64 game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1). Set `MEITOU_DIR` to the extracted folder containing `MeitouClient.dll` and `Meitou.Data.dll`.
 
 ## Build and check a change
 
@@ -19,7 +19,7 @@ The regular test suite runs without starting Kenshi. It reads the real FCS heade
 
 ## Repository conventions
 
-Use UTF-8, LF and spaces. C# uses four spaces and braces on new lines. JSON and MSBuild files use two spaces. The SDK treats build warnings as errors. These conventions follow the parts of Meitou's style that apply to this repository. Keep diffs focused and preserve shipped pack, craft and placement IDs across upgrades. [Meitou editor settings](https://github.com/VlcekM/MeitouClient/blob/v0.20.1/.editorconfig)
+Use UTF-8, LF and spaces. C# uses four spaces and braces on new lines. JSON and MSBuild files use two spaces. The SDK treats build warnings as errors. These conventions follow the parts of Meitou's style that apply to this repository. Keep diffs focused and preserve shipped pack, craft and placement IDs across upgrades. [Meitou editor settings](https://github.com/VlcekM/MeitouClient/blob/v0.22.1/.editorconfig)
 
 For a formatting pass, restore or build the relevant projects first. The last project below is the optional live verifier.
 

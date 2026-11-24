@@ -1,16 +1,16 @@
 # Meitou Transport playtest
 
-Use [Transport playtest.5](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5) with the packaged [MeitouClient v0.20.1 Windows x64 game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1).
+Use the `0.3.0-playtest.6` candidate built from this branch with packaged [MeitouClient v0.22.1 Windows x64](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1). [Build instructions](CONTRIBUTING.md). The published playtest.5 download remains for v0.20.1.
 
 ## Install
 
 1. When using the tester handoff, unzip it into a temporary folder first. Its installable mod ZIPs are at the top level. The kit includes a source archive and `SHA256SUMS.txt`. To check a file in PowerShell, run `Get-FileHash -Algorithm SHA256 "filename.zip"` and compare the result with its line in the checksum list.
 2. Extract the **Meitou Transport** ZIP and whichever example ZIPs you want directly into your Kenshi installation's `mods` directory. A correctly placed file is `Kenshi/mods/Meitou Transport/Meitou Transport.mod`. To upgrade an earlier prototype, close the client and replace each corresponding mod folder. Keep a copy of the save you plan to use.
-3. For the recording start, enable **Meitou Transport → Garru Saddle → Stoat Desert Ride** in the launcher. For the boat, enable **Meitou Transport → Western Hive Skiff**. To play both together, use **Meitou Transport → Garru Saddle → Stoat Desert Ride → Western Hive Skiff**. Launch MeitouClient v0.20.1.
+3. For the recording start, enable **Meitou Transport → Garru Saddle → Stoat Desert Ride** in the launcher. For the boat, enable **Meitou Transport → Western Hive Skiff**. To play both together, use **Meitou Transport → Garru Saddle → Stoat Desert Ride → Western Hive Skiff**. Launch MeitouClient v0.22.1.
 
 ## Ride a Garru
 
-To recreate the bag test from the tester handoff, use the Stoat ZIP in `AlternateStart/` in place of the one in `Mods/`, then start a new Stoat Desert Ride. It uses the same mod name and load order. The stock Pack Beast starts with its own bags. The Stoat ZIP in `Mods/` gives you the original Garru start.
+The standard Stoat start supplies a Garru. To reproduce the stock-bag comparison, use the `stoat-bags` scenario in the source checkout’s live verification guide. It generates an isolated Pack Beast start with the same mod name and load order. An owned stock Pack Beast in ordinary play can use the same Garru Saddle fit.
 
 For the recording start, install and enable **Meitou Transport → Garru Saddle → Stoat Desert Ride** in that order. Choose **New Game → Stoat Desert Ride** and accept the rider's appearance. You start at **X 34595, Z −70128** outside Stoat with Wooden Sandals, Noble's Robe, Noble's Trousers and Square Goggles already equipped. Select just the Scorchlander and mount the nearby Garru. To switch, dismount, walk beside the Domesticated Bull and use the same mount action. The nearest eligible animal gets the rider. Move the animals apart if needed. **F7** hides the HUD for recording and restores it when pressed again.
 

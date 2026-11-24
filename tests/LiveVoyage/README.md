@@ -1,6 +1,6 @@
 # Live riding and voyage verification
 
-Set `MEITOU_DIR` to the extracted [v0.20.1 Windows x64 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1).
+Set `MEITOU_DIR` to the extracted [v0.22.1 Windows x64 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1).
 
 Back in the Transport checkout, build the framework, `tests/LiveVoyage/LiveVoyage.csproj` and `tools/DesertRide/DesertRide.csproj` in Release, then run `python tools/package.py`. The trial runner checks the executable’s full product version and commit before staging the profile.
 
@@ -45,7 +45,7 @@ For a lightweight visual check, choose **fit**. It runs the released client's fl
 
 Run `python tests/LiveVoyage/prepare.py author <empty-QA-mods-directory>` for the independent-author trial. The script extracts the packaged framework and follows its bundled guide to create the data-only **Skiff.mod**. Use `core` for the framework alone or `example` for the two shipping ZIPs. Point Meitou at a test installation with the original game data and those mod folders. Supply a separate `--mods-cfg` listing the framework first and the chosen content mod second.
 
-Set the following variables for the **test process** and start the pinned nightly game with `--new-game Wanderer`.
+Set the following variables for the **test process** and start the pinned packaged game with `--new-game Wanderer`.
 
 | Variable | Value |
 | --- | --- |

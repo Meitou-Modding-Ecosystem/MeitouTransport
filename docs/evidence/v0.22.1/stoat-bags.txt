@@ -1,0 +1,27 @@
+LIVE RIDE using Garru Saddle for 3999-gamedata.base
+mod       meitou.transport: Garru Saddle.mod registered 0 vessel(s), 0 placement(s) and 1 mount fit(s).
+mod       meitou.transport: Stoat Desert Ride.mod registered 0 vessel(s), 0 placement(s) and 1 mount fit(s).
+mod       meitou.transport: loaded from Meitou Transport (Meitou.Transport)
+LIVE RIDE survey at <34598.6, 969.1102, -70126.58>, first <1, 0, 0> towards <34718.6, 963.8297, -70126.58>, turn towards <34663.6, 950.1347, -70026.58>
+LIVE RIDE Start tick=1 animal=<34598.6, 969.1102, -70126.58> selected=False rider=<34593.227, 969.87354, -70128.59> distance=5.8 saddle=False gait=idle1
+LIVE RIDE start Sable and Pack Beast, backpack=4002-gamedata.base, inventory entries=3, scale=1, position=<34598.6, 969.1102, -70126.58>
+LIVE RIDE Stoat start at <34593.227, 969.87354, -70128.59>: female Scorchlander, all four items equipped, 3999-gamedata.base and Domesticated Bull present.
+LIVE VOYAGE F10 Mount nearby animal -> Mount queued.
+LIVE RIDE native DrawAnchor and BoneMesh on tick 17: Sable -> Pack Beast, bone Bip01 Spine1, saddle mesh mvv_garru_saddle.mesh?mvv_garru_saddle.dds, draw ID 625
+LIVE RIDE walk at <34622.32, 966.8963, -70122.484>, walk
+LIVE RIDE Run tick=116 animal=<34662.258, 965.50684, -70124> selected=True rider=<34662.258, 965.50684, -70124> distance=0.0 saddle=True gait=run
+LIVE RIDE Turn tick=153 animal=<34720.145, 960.0443, -70106.4> selected=True rider=<34720.145, 960.0443, -70106.4> distance=0.0 saddle=True gait=run,walk
+LIVE RIDE turn: poses=112 turnFrames=41 nativeBagFrames=112 headingChange=93.0 deg, maxSaddleError=0.00873 maxSeatError=0.01611 units
+LIVE RIDE verified 112 posed frames; climb=14.9, clips=idle1,walk,run, saving <profile>\live-voyage-saves\Ride-bb529b97e4634fe4b3fecc210a8549fc
+LIVE RIDE Loading tick=1 animal=<34732.664, 953.8682, -70070.15> selected=False rider=<34743.656, 953.675, -70069.695> distance=11.0 saddle=False gait=idle1
+LIVE RIDE Loading tick=26 animal=<34732.664, 953.8682, -70070.15> selected=False rider=<34743.656, 953.675, -70069.695> distance=11.0 saddle=False gait=idle1
+LIVE RIDE reload on foot beside original animal, distance=11.0, backpack=4002-gamedata.base, inventory entries=3
+LIVE VOYAGE F10 Mount nearby animal -> Mount queued.
+LIVE RIDE camera away: carrier absent 5 frames, rider visible=False, saddle absent
+LIVE RIDE camera return: 8 consecutive aligned frames, one saddle, bag and cargo intact; rider-only frames=0, carrier-only frames=0
+LIVE VOYAGE F10 Dismount -> Dismount queued.
+LIVE RIDE mount stopped at <34732.664, 953.8682, -70070.15>; rider walked 19.9 units
+LIVE VOYAGE F10 Mount nearby animal -> Mount queued.
+LIVE VOYAGE F10 Dismount -> Dismount queued.
+LIVE RIDE all measured frames including save and remount: maxSaddleError=0.00873 maxSeatError=0.02376 units
+LIVE RIDE PASS Stoat outfit, authored start, Pack Beast ride and turn, save, reload, remount, and Domesticated Bull ride

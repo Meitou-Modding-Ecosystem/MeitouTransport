@@ -1,0 +1,4 @@
+LIVE VOYAGE Armed for the fresh Wanderer, content pack 'none'.
+mod       meitou.transport: loaded from Meitou Transport (Meitou.Transport)
+LIVE VOYAGE SETUP fresh actor 0.0, Mu, starting at <-50978.8, 1533.4722, 2932.4766>.
+LIVE VOYAGE PASS framework alone has zero vessels and zero transport actions at tick 1.
