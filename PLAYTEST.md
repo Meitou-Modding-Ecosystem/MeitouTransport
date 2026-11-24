@@ -1,6 +1,6 @@
 # Meitou Transport playtest
 
-Use the `0.3.0-playtest.6` candidate built from this branch with packaged [MeitouClient v0.22.1 Windows x64](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1). [Build instructions](CONTRIBUTING.md). The published playtest.5 download remains for v0.20.1.
+Use [Transport `0.3.0-playtest.6`](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.6) with packaged [MeitouClient v0.22.1 Windows x64](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1). [Build instructions](CONTRIBUTING.md). The published playtest.5 download remains for v0.20.1.
 
 ## Install
 

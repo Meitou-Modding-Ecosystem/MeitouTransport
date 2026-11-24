@@ -2,7 +2,7 @@
 
 Tested on 2026-11-24 with official Windows x64 MeitouClient `0.22.1+9ee4074bbc6fd7fdeb26108a04afc9f90cb1dc01`, mod API 2 and .NET SDK 11.0.100. The release archive digest and all 260 extracted files were verified. [Environment](evidence/v0.22.1/environment.json).
 
-Candidate `0.3.0-playtest.6` updates the game pin, build defaults, verifier pin and instructions. No runtime C# changes were needed. Schema 3, pack and save IDs, the released descriptor, saddle art and point-to-point boat controls are unchanged. This candidate is not yet a published release; playtest.5 remains available for v0.20.1.
+Candidate `0.3.0-playtest.6` updates the game pin, build defaults, verifier pin and instructions. No runtime C# changes were needed. Schema 3, pack and save IDs, the released descriptor, saddle art and point-to-point boat controls are unchanged. The tested candidate is published as playtest.6; playtest.5 remains available for v0.20.1.
 
 ## Garru and Pack Beast
 

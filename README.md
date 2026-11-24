@@ -1,12 +1,12 @@
 # Meitou Transport
 
-**[Download the published v0.20.1 playtest](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/download/v0.3.0-playtest.5/Meitou-Transport-0.3.0-playtest.5-handoff.zip)** · **[Watch the Stoat ride](https://streamable.com/5592xt)**
+**[Download the playtest](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/download/v0.3.0-playtest.6/Meitou-Transport-0.3.0-playtest.6-handoff.zip)** · **[Watch the Stoat ride](https://streamable.com/5592xt)**
 
 Ride a squad animal or sail a one-seat vessel in Kenshi with **MeitouClient v0.22.1 for Windows x64**. This optional framework handles seating, movement, rendering and saves. Content packs choose which animals can carry a rider and where boats appear. Enabling the framework alone leaves the transport world empty.
 
-**This branch prepares `0.3.0-playtest.6` for v0.22.1; it is not yet a published release.** Build it using [the contribution guide](CONTRIBUTING.md). The existing **public playtest `0.3.0-playtest.5` is for v0.20.1** and includes four installable ZIPs, corresponding source and checksums. Extract the kit, then extract each mod you want directly into `Kenshi/mods/`. [Release notes and individual downloads](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5)
+**Public playtest `0.3.0-playtest.6` for v0.22.1** includes four installable ZIPs, corresponding source and checksums. Extract the kit, then extract each mod you want directly into `Kenshi/mods/`. [Release notes and individual downloads](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.6). For Meitou v0.20.1, use [playtest.5](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5).
 
-Meitou places the rider with `DrawAnchor` and submits the separate saddle with `SetBoneMesh`. For visual authoring, [download Maestro](https://github.com/Meitou-Modding-Ecosystem/MeitouMaestro/releases/tag/v0.1.0-playtest.1) and use the framework's **Add riding fit** action. Released Maestro still requires v0.20.1 readers for authoring; its schema-3 packs remain usable by this v0.22.1 candidate. For Meitou v0.18.0, use [Transport playtest.4](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.4).
+Meitou places the rider with `DrawAnchor` and submits the separate saddle with `SetBoneMesh`. For visual authoring, [download Maestro](https://github.com/Meitou-Modding-Ecosystem/MeitouMaestro/releases/tag/v0.1.0-playtest.1) and use the framework's **Add riding fit** action. Released Maestro still requires v0.20.1 readers for authoring; its schema-3 packs remain usable by this v0.22.1 release. For Meitou v0.18.0, use [Transport playtest.4](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.4).
 
 Players using MeitouClient **v0.17.4** can use the [previous playtest](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.3).
 
