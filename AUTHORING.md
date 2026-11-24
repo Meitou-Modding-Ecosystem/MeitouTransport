@@ -1,6 +1,6 @@
 # Make a transport pack
 
-Install [Meitou Transport playtest.5](https://github.com/mattresspad/MeitouTransport/releases/tag/v0.3.0-playtest.5) for [MeitouClient v0.20.1](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1). Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
+Install [Meitou Transport playtest.5](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5) for [MeitouClient v0.20.1](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1). Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
 
 The original skiff, saddle, textures, example headers and definitions are dedicated to the public domain under CC0. You may rename, modify and redistribute them in your own packs, including commercial work, without attribution. [License terms](LICENSING.md)
 
@@ -91,7 +91,7 @@ Open `Stoat Desert Ride.mod` in FCS to edit these records. Its `transport.json` 
 
 ## Fit an animal in Maestro
 
-Install [Maestro](https://github.com/mattresspad/MeitouMaestro/releases/tag/v0.1.0-playtest.1) and the released framework. Choose **Add riding fit**, select the animal from your FCS project, preview its bone and seat, then review and export. The framework supplies the action through `maestro.json`. [Illustrated walkthrough](https://github.com/mattresspad/MeitouMaestro/blob/v0.1.0-playtest.1/AVALONIA.md)
+Install [Maestro](https://github.com/Meitou-Modding-Ecosystem/MeitouMaestro/releases/tag/v0.1.0-playtest.1) and the released framework. Choose **Add riding fit**, select the animal from your FCS project, preview its bone and seat, then review and export. The framework supplies the action through `maestro.json`. [Illustrated walkthrough](https://github.com/Meitou-Modding-Ecosystem/MeitouMaestro/blob/v0.1.0-playtest.1/AVALONIA.md)
 
 ## A question for Husbandry authors
 

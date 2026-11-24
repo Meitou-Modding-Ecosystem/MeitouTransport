@@ -11,4 +11,4 @@ Errors are world units. Both stay below 0.08. Broadside, the rigid saddle sits h
 
 Both rides included walking, running, saving while mounted, loading on foot, remounting, dismounting and walking away. Transport alone loaded with zero craft and actions. The skiff passed both a fresh voyage and an old-slot replay including boarding, steering and reload. The one- and four-worker simulations agreed over 333 vessel ticks and 216 riding ticks.
 
-[Reproduce the Windows trials](../tests/LiveVoyage/README.md) · [Author the saddle](https://github.com/mattresspad/MeitouMaestro/blob/v0.1.0-playtest.1/AVALONIA.md)
+[Reproduce the Windows trials](../tests/LiveVoyage/README.md) · [Author the saddle](https://github.com/Meitou-Modding-Ecosystem/MeitouMaestro/blob/v0.1.0-playtest.1/AVALONIA.md)

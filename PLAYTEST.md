@@ -1,6 +1,6 @@
 # Meitou Transport playtest
 
-Use [Transport playtest.5](https://github.com/mattresspad/MeitouTransport/releases/tag/v0.3.0-playtest.5) with the packaged [MeitouClient v0.20.1 Windows x64 game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1).
+Use [Transport playtest.5](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5) with the packaged [MeitouClient v0.20.1 Windows x64 game](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1).
 
 ## Install
 
@@ -29,4 +29,4 @@ Ordinary saves preserve vessel placement IDs, including while a pack is temporar
 
 ## Send feedback
 
-Open an issue on the Transport repository with the playtest and game versions, enabled packs in load order, whether you used a new or existing save, and the shortest steps that reproduce what you saw. Include what you expected and what happened. For a saddle issue, the animal type, age, equipment and a side-view screenshot during a turn help distinguish the fit from the motion. For a boat, include the location and whether you had already sailed or reloaded. Relevant log lines are enough. You can redact local paths. [Report a Transport issue](https://github.com/mattresspad/MeitouTransport/issues)
+Open an issue on the Transport repository with the playtest and game versions, enabled packs in load order, whether you used a new or existing save, and the shortest steps that reproduce what you saw. Include what you expected and what happened. For a saddle issue, the animal type, age, equipment and a side-view screenshot during a turn help distinguish the fit from the motion. For a boat, include the location and whether you had already sailed or reloaded. Relevant log lines are enough. You can redact local paths. [Report a Transport issue](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/issues)
