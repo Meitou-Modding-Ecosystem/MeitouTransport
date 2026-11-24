@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-24",
+  "gameVersion": "0.22.1+9ee4074bbc6fd7fdeb26108a04afc9f90cb1dc01",
+  "gameArchiveSha256": "e9d1c41330d0859902b35db450209f86a5cf5093c846545153c3eb131161375f",
+  "verifiedGameFiles": 260,
+  "apiVersion": 2,
+  "sdk": "11.0.100",
+  "runtime": "Windows x64, NVIDIA RTX 3070, native offscreen Vulkan",
+  "saddleArchiveSha256": "8efefbe8ef1b154ad31b180b19c072496905c0f47ec1755439f2f40bc31d025e",
+  "frameworkSha256": "3253c1d567deb92cf8d0b228ec96807f1b40f3c944cde71fa940e8200d3c5f34",
+  "candidate": "0.3.0-playtest.6"
+}

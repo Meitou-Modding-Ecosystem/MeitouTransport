@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 $trial = [IO.Path]::GetFullPath($TrialDirectory)
 if (Test-Path -LiteralPath $trial) { throw "Use a fresh trial directory: $trial" }
 $gameExe = (Resolve-Path (Join-Path $Game 'MeitouClient.exe')).Path
-$expectedBuild = '0.20.1+8c79093d075fac1f4ca8df53cf025b6155cac45f'
+$expectedBuild = '0.22.1+9ee4074bbc6fd7fdeb26108a04afc9f90cb1dc01'
 $actualBuild = (Get-Item -LiteralPath $gameExe).VersionInfo.ProductVersion
 if ($actualBuild -ne $expectedBuild) { throw "This verifier needs $expectedBuild. Found $actualBuild." }
 Write-Output "Meitou game $actualBuild"

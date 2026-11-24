@@ -1,9 +1,9 @@
 {
   "id": "meitou.transport.live-voyage",
-  "version": "0.3.0-playtest.5",
+  "version": "0.3.0-playtest.6",
   "apiVersion": 2,
-  "gameVersion": "=0.20.1",
-  "dependencies": [{ "id": "meitou.transport", "version": "=0.3.0-playtest.5" }],
+  "gameVersion": "=0.22.1",
+  "dependencies": [{ "id": "meitou.transport", "version": "=0.3.0-playtest.6" }],
   "assemblies": ["Meitou.Transport.LiveVoyage.dll"],
   "entry": "Meitou.Transport.Verification.LiveVoyage"
 }

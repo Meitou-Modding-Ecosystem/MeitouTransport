@@ -1,6 +1,6 @@
 # Make a transport pack
 
-Install [Meitou Transport playtest.5](https://github.com/Meitou-Modding-Ecosystem/MeitouTransport/releases/tag/v0.3.0-playtest.5) for [MeitouClient v0.20.1](https://github.com/VlcekM/MeitouClient/releases/tag/v0.20.1). Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
+Install the Meitou Transport `0.3.0-playtest.6` candidate for [MeitouClient v0.22.1](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1), built using [these instructions](CONTRIBUTING.md). Released Maestro v0.1.0-playtest.1 still uses v0.20.1 readers for authoring; the exported schema-3 pack is compatible with this candidate. Players enable the framework and the pack you author. Your pack decides which boats are placed and which animal records have a riding fit. These recipes require only FCS, JSON and the art you choose.
 
 The original skiff, saddle, textures, example headers and definitions are dedicated to the public domain under CC0. You may rename, modify and redistribute them in your own packs, including commercial work, without attribution. [License terms](LICENSING.md)
 

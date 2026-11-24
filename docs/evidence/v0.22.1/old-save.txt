@@ -1,0 +1,24 @@
+LIVE VOYAGE Checking a previous-release save with 'Western Hive Skiff'.
+mod       meitou.transport: Western Hive Skiff.mod registered 1 vessel(s), 1 placement(s) and 0 mount fit(s).
+mod       meitou.transport: loaded from Meitou Transport (Meitou.Transport)
+LIVE VOYAGE SETUP fresh actor 0.0, Mu, starting at <-120744.055, 85, -17586.215>.
+LIVE VOYAGE WAIT Waiting tick=2 at=<-120744.055, 100, -17586.215> seated=False hull=<-120740.18, 100, -17580.387> chair=False walkable=<-120708.055, 100.25, -17586.215>.
+LIVE VOYAGE PREVIOUS RELEASE restored western-hive.skiff at <-120740.18, 100, -17580.387>, yaw 0.58723074, empty helm.
+LIVE VOYAGE F10 Board nearby vessel -> Board queued.
+LIVE VOYAGE BOARD tick=6 actor=<-120744.055, 101, -17586.215> pose=sitting chair hull=<-120740.18, 100, -17580.387>.
+LIVE VOYAGE OBSERVE BOARD for 15 seconds. Camera target=<-120740.18, 100, -17580.387> eye=<-120662.26, 142.05717, -17518.553>.
+LIVE VOYAGE WAIT ObserveBoarded tick=234 at=<-120744.055, 100, -17586.215> seated=True hull=<-120740.18, 100, -17580.387> chair=True walkable=<-120708.055, 100.25, -17586.215>.
+LIVE VOYAGE F10 Sail to camera target -> Sail queued.
+LIVE VOYAGE WAIT Sail tick=472 at=<-120729.26, 100, -17564.068> seated=True hull=<-120726.53, 100, -17559.977> chair=True walkable=<-120693.26, 100.25, -17564.068>.
+LIVE VOYAGE SAIL tick=514 travelled=70.8 actor=<-120704.73, 101, -17527.332> hull=<-120700.85, 100, -17521.504>, rotation={X:0 Y:0.28942212 Z:0 W:0.95720154}.
+LIVE VOYAGE SAVE requested while occupied and moving, rider=Mu portrait=3533243136, slot=<profile>\live-voyage-saves\Western-Hive-9303723f09b54bdeab04adb75a5db16a.
+LIVE VOYAGE SAVE wrote native quick.save and framework sidecar, hull=<-120699.88, 100, -17520.05> yaw=0.5871237. Loading the same QA slot.
+LIVE VOYAGE LOAD new world with Mu, record=1533662-rebirth.mod, saved portrait=3533243136, id=0.0.
+LIVE VOYAGE RESTORED empty hull at <-120699.88, 100, -17520.05>, rotation={X:0 Y:0.28936353 Z:0 W:0.9572193}, unseated rider <-120703.76, 85, -17525.879>.
+LIVE VOYAGE WAIT Restored tick=31 at=<-120703.76, 100, -17525.879> seated=False hull=<-120699.88, 100, -17520.05> chair=False walkable=<-120667.76, 100.25, -17525.879>.
+LIVE VOYAGE STATIONARY for 30 ticks after native load.
+LIVE VOYAGE F10 Board nearby vessel -> Board queued.
+LIVE VOYAGE REBOARD same player, actual seated draw=<-120703.76, 101, -17525.879>, tick=34.
+LIVE VOYAGE F10 Disembark -> Disembark queued.
+LIVE VOYAGE EXIT tick=35 actor=<-120689.89, 100, -17526.7>, unseated, next ordinary movement target=<-120653.89, 100.25, -17526.7>.
+LIVE VOYAGE PASS normal MoveOrder advanced 5.1 units from <-120689.89, 100, -17526.7> toward <-120653.89, 100.25, -17526.7>, tick=60.

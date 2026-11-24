@@ -1,0 +1,4 @@
+PASS  framework alone, FCS packages, schemas 1/2, load order, Workshop, mesh and texture
+PASS  automatic/manual sites, boarding, steering, draft, 0.1.0 saves, pack re-enabling and 333 matching tick hashes
+PASS  native saddle and rider on a rotated bone at two carrier sizes, independent attachment preserved
+PASS  schema 3, load-order override, bad bone, native riding and selection, forced and blocked exits, 216 matching ride hashes
