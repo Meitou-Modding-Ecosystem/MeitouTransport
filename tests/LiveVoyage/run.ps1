@@ -7,7 +7,9 @@ param(
     [string]$OldSave,
     [string]$SaddleZip,
     [string]$CacheDirectory,
-    [string]$CpuVulkanIcd
+    [string]$CpuVulkanIcd,
+    # Trial another Meitou build (a newer release or a nightly within meitou.json's gameVersion) instead of the pinned release.
+    [switch]$AnyBuild
 )
 $ErrorActionPreference = 'Stop'
 $trial = [IO.Path]::GetFullPath($TrialDirectory)
@@ -15,7 +17,7 @@ if (Test-Path -LiteralPath $trial) { throw "Use a fresh trial directory: $trial"
 $gameExe = (Resolve-Path (Join-Path $Game 'MeitouClient.exe')).Path
 $expectedBuild = '0.22.1+9ee4074bbc6fd7fdeb26108a04afc9f90cb1dc01'
 $actualBuild = (Get-Item -LiteralPath $gameExe).VersionInfo.ProductVersion
-if ($actualBuild -ne $expectedBuild) { throw "This verifier needs $expectedBuild. Found $actualBuild." }
+if (!$AnyBuild -and $actualBuild -ne $expectedBuild) { throw "This verifier needs $expectedBuild. Found $actualBuild." }
 Write-Output "Meitou game $actualBuild"
 $source = (Resolve-Path $Kenshi).Path
 $install = Join-Path $trial 'install'

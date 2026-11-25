@@ -14,9 +14,13 @@ concurrency:
 
 jobs:
   validate:
-    name: Build, simulation and package checks
+    name: Build, simulation and package checks (${{ matrix.engine }})
     runs-on: windows-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: ['0.20.1', '0.22.1']
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
@@ -27,7 +31,7 @@ jobs:
       - name: Download verified build fixtures
         shell: pwsh
         working-directory: .
-        run: ./tools/GetCIEngine.ps1 -Output (Join-Path $env:RUNNER_TEMP 'meitou-fixtures')
+        run: ./tools/GetCIEngine.ps1 -Output (Join-Path $env:RUNNER_TEMP 'meitou-fixtures') -Version '${{ matrix.engine }}'
       - name: Build and run regressions
         shell: pwsh
         working-directory: .
