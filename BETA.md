@@ -1,6 +1,6 @@
 # Beta development
 
-Develop on a working branch and open a PR targeting `beta`. All validation jobs must pass before the required `Release readiness` check succeeds. Under the existing repository rules, Super Maintainers may use the beta approval bypass after checks pass. This setup does not change protections or bypass required CI. Main and release remain separate review and release gates.
+Develop on a working branch and open a PR targeting `beta`. All validation jobs must pass before the required `Development readiness` check succeeds. The current beta rules require a PR and successful CI, with zero approvals and no bypass needed. This setup does not change protections or bypass required CI. Main and release remain separate review and release gates.
 
 ## Automated validation
 
