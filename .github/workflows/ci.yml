@@ -84,16 +84,20 @@ jobs:
   release-readiness:
     name: Release readiness
     if: always()
-    needs:
-    - development-readiness
+    needs: [development-readiness]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-    - name: Require prerequisite checks
-      env:
-        RESULTS: ${{ toJSON(needs) }}
-        TARGET: ${{ github.base_ref || github.ref_name }}
-      run: "python - <<'PYCODE'\nimport json, os\nresults = json.loads(os.environ['RESULTS'])\ntarget = os.environ['TARGET']\n\
-        required = list(results) if target == 'release' else ['development-readiness']\nif not required or any(results[key]['result']\
-        \ != 'success' for key in required):\n    raise SystemExit('A prerequisite failed, was cancelled, or was skipped')\n\
-        PYCODE\n"
+      - name: Require development checks and block unvalidated production promotion
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+          TARGET: ${{ github.base_ref || github.ref_name }}
+        run: |
+          python - <<'PYCODE'
+          import json, os
+          results = json.loads(os.environ['RESULTS'])
+          if os.environ['TARGET'] == 'release':
+              raise SystemExit('Production promotion is disabled: validated production packaging and release acceptance checks are not configured.')
+          if not results or any(item['result'] != 'success' for item in results.values()):
+              raise SystemExit('A development prerequisite failed, was cancelled, or was skipped')
+          PYCODE
