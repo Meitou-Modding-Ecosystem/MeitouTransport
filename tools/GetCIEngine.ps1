@@ -1,12 +1,13 @@
 # Managed build/test fixtures only; never launches the game.
 param(
     [Parameter(Mandatory)][string]$Output,
-    [ValidateSet('0.20.1', '0.22.1')][string]$Version = '0.22.1'
+    [ValidateSet('0.20.1', '0.22.1', '0.23.2')][string]$Version = '0.23.2'
 )
 $ErrorActionPreference = 'Stop'
 $hash = @{
     '0.20.1' = 'ea090b02f48bddcc11998c7f2ac7a75fe71a42d15bb691953d32132dbce9a820'
     '0.22.1' = 'e9d1c41330d0859902b35db450209f86a5cf5093c846545153c3eb131161375f'
+    '0.23.2' = '47307a4e528644b143783b93919dbefc4c22a51472afc24a065f4cbd9a424903'
 }[$Version]
 New-Item -ItemType Directory -Force -Path $Output | Out-Null
 $archive = Join-Path $Output "Meitou-$version-win-x64.zip"

@@ -1,12 +1,12 @@
 {
   "id": "meitou.transport.live-voyage",
-  "version": "0.3.0-playtest.6",
+  "version": "0.3.0-playtest.7",
   "apiVersion": 2,
-  "gameVersion": ">=0.20.1 <0.23.0",
+  "gameVersion": ">=0.23.2",
   "dependencies": [
     {
       "id": "meitou.transport",
-      "version": "=0.3.0-playtest.6"
+      "version": "=0.3.0-playtest.7"
     }
   ],
   "assemblies": [
