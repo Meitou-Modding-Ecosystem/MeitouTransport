@@ -1,6 +1,6 @@
 # Live riding and voyage verification
 
-Set `MEITOU_DIR` to the extracted [v0.22.1 Windows x64 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.22.1).
+Set `MEITOU_DIR` to the extracted [v0.23.2 Windows x64 release](https://github.com/VlcekM/MeitouClient/releases/tag/v0.23.2).
 
 To trial another build inside `meitou.json`'s `gameVersion` range (a newer release or a nightly), point `MEITOU_DIR` and `-Game` at it and add `-AnyBuild`; the runner then skips its exact-build check and still prints the build it ran.
 
